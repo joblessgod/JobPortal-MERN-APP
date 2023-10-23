@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "../../global/Button";
+import DeleteProfile from "./DeleteProfile";
 import {
   getDownloadURL,
   getStorage,
@@ -12,16 +13,20 @@ import {
   updateUserSuccess,
   updateUserFailure,
   updateUserStart,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
 } from "../../redux/user/userSlice.js";
+
 const EmployerProfile = () => {
   const fileRef = useRef(null);
   const dispatch = useDispatch();
-  const { currentUser,error,loading } = useSelector((state) => state.user);
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
-  const[updateSuccess,setUpdateSuccess] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   console.log(formData);
   console.log(filePerc);
@@ -81,7 +86,7 @@ const EmployerProfile = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if(data.success === false){
+      if (data.success === false) {
         dispatch(updateUserFailure(data.message));
         return;
       }
@@ -90,6 +95,27 @@ const EmployerProfile = () => {
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
+  };
+  /* const handleDelete= async ()=>{
+try{
+dispatch(deleteUserStart());
+const res = await fetch(`/api/auth/delete/${currentUser._id}`,{
+  method:"DELETE"
+})
+const data = res.json();
+if(data.success === false){
+  dispatch(deleteUserFailure(data.message))
+  return;
+}
+dispatch(deleteUserSuccess());
+}catch(error){
+  dispatch(deleteUserFailure(error.message))
+}
+  }*/
+  const handleDelete = DeleteProfile();
+
+  const handleClickToDelete = async () => {
+    await handleDelete();
   };
   return (
     <div className="max-w-4xl m-auto">
@@ -145,8 +171,6 @@ const EmployerProfile = () => {
               onChange={handleChange}
             />
           </div>
-         
-              
 
           <div className="mb-4">
             <label
@@ -202,16 +226,21 @@ const EmployerProfile = () => {
           </div>
         </div>
         <Button msg="Update" border="rounded-button" />
-        <p className="text-[red] font-poppins">{error? error : ''}</p>
-        {updateSuccess && <p className="text-[green] font-poppins my-3 text-start">Profile Updated Successfully!</p>}
+        <p className="text-[red] font-poppins">{error ? error : ""}</p>
+        {updateSuccess && (
+          <p className="text-[green] font-poppins my-3 text-start">
+            Profile Updated Successfully!
+          </p>
+        )}
         <div className=" bg-[gray] h-1  my-2" />
         <div className="flex flex-row justify-between items-center mt-2 mb-2">
-          <button className="font-poppins text-[#B91C1C]   ">
+          <span
+            onClick={handleClickToDelete}
+            className="font-poppins text-[#B91C1C] cursor-pointer  "
+          >
             Delete Account
-          </button>
-          <button className="font-poppins text-[#22C55E]  ">
-            Applied Jobs
-          </button>
+          </span>
+          <span className="font-poppins text-[#22C55E]  ">Applied Jobs</span>
           <button className="font-poppins text-[#B91C1C]  ">Sign Out</button>
         </div>
       </form>

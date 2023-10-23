@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "../../global/Button";
+import DeleteProfile from "./DeleteProfile";
 import {
   getDownloadURL,
   getStorage,
@@ -12,6 +13,7 @@ import {
   updateUserSuccess,
   updateUserFailure,
   updateUserStart,
+  deleteUserFailure,deleteUserStart,deleteUserSuccess
 } from "../../redux/user/userSlice.js";
 const SeekerProfile = () => {
   const fileRef = useRef(null);
@@ -91,6 +93,30 @@ const SeekerProfile = () => {
       dispatch(updateUserFailure(error.message));
     }
   };
+ /* const handleDelete= async ()=>{
+    try{
+    dispatch(deleteUserStart());
+    const res = await fetch(`/api/auth/delete/${currentUser._id}`,{
+      method:"DELETE"
+    })
+    const data = res.json();
+    if(data.success === false){
+      dispatch(deleteUserFailure(data.message))
+      return;
+    }
+    dispatch(deleteUserSuccess());
+    }catch(error){
+      dispatch(deleteUserFailure(error.message))
+    }
+      }*/
+     const handleDelete = DeleteProfile();
+
+  const handleClickToDelete = async () => {
+    
+      await handleDelete();
+     
+    } ;
+  
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
@@ -226,9 +252,9 @@ const SeekerProfile = () => {
         {updateSuccess && <p className="text-[green] font-poppins my-3 text-start">Profile Updated Successfully!</p>}
         <div className=" bg-[gray] h-1  my-2" />
         <div className="flex flex-row justify-between items-center mt-2 mb-2">
-          <button className="font-poppins text-[#B91C1C]   ">
+          <span onClick={handleClickToDelete} className="font-poppins text-[#B91C1C] cursor-pointer  ">
             Delete Account
-          </button>
+          </span>
           <button className="font-poppins text-[#22C55E]  ">
             Applied Jobs
           </button>
