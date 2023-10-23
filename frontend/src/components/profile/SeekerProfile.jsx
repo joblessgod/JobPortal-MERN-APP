@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "../../global/Button";
 import {
   getDownloadURL,
@@ -8,13 +8,21 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../../firebase.js";
+import {
+  updateUserSuccess,
+  updateUserFailure,
+  updateUserStart,
+} from "../../redux/user/userSlice.js";
 const SeekerProfile = () => {
   const fileRef = useRef(null);
-  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { currentUser,error,loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
+  const[updateSuccess,setUpdateSuccess] = useState(false);
+
   console.log(formData);
   console.log(filePerc);
   console.log(fileUploadError);
@@ -38,7 +46,7 @@ const SeekerProfile = () => {
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
-      'state_changed',
+      "state_changed",
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -54,12 +62,41 @@ const SeekerProfile = () => {
       }
     );
   };
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+  console.log(formData);
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/auth/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if(data.success === false){
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  };
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
         {currentUser.name.split(" ")[0]}'s Profile
       </h1>
-      <form>
+      <form onSubmit={handleUpdateSubmit}>
         <input
           type="file"
           onChange={(e) => {
@@ -78,10 +115,17 @@ const SeekerProfile = () => {
           className="h-24 w-24 rounded-[999px] m-auto cursor-pointer"
         />
         <p className="text-sm m-2 font-poppins">
-        {fileUploadError ? (<span className="text-[#FF0000]">Error (Image Must be Less Than 2 Mega Byte)</span>) : 
-       filePerc > 0 && filePerc < 100 ? (<span className="text-[gray]">{`Uploading ${filePerc} %`}</span>) : 
-       filePerc === 100 ?(<span className="text-[green]">Image Successfully Uploaded!</span>) : ""
-      }
+          {fileUploadError ? (
+            <span className="text-[#FF0000]">
+              Error (Image Must be Less Than 2 Mega Byte)
+            </span>
+          ) : filePerc > 0 && filePerc < 100 ? (
+            <span className="text-[gray]">{`Uploading ${filePerc} %`}</span>
+          ) : filePerc === 100 ? (
+            <span className="text-[green]">Image Successfully Uploaded!</span>
+          ) : (
+            ""
+          )}
         </p>
         <div className="sm:grid sm:grid-cols-2 sm:gap-6  p-3 flex flex-col gap-2">
           <div className="mb-4">
@@ -97,7 +141,8 @@ const SeekerProfile = () => {
               name="companyName"
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="Name"
-              value={currentUser.name}
+              defaultValue={currentUser.name}
+              onChange={handleChange}
             />
           </div>
           <div className="mb-4">
@@ -111,11 +156,12 @@ const SeekerProfile = () => {
               id="pjobcategory"
               name="pjobCategory"
               className="w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] "
+              onChange={handleChange}
             >
               <option>Select Your Preferred Job Category</option>
               <option value="Account">Account</option>
-              <option value={currentUser.pjobCategory} selected>
-                IT
+              <option defaultValue={currentUser.pjobCategory} selected>
+                {currentUser.pjobcategory}
               </option>
 
               <option value="Teaching">Teaching</option>
@@ -135,7 +181,8 @@ const SeekerProfile = () => {
               name="email"
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="Email"
-              value={currentUser.email}
+              defaultValue={currentUser.email}
+              onChange={handleChange}
             />
           </div>
 
@@ -152,7 +199,8 @@ const SeekerProfile = () => {
               name="phone"
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="Phone"
-              value={currentUser.phone}
+              defaultValue={currentUser.phone}
+              onChange={handleChange}
             />
           </div>
 
@@ -169,13 +217,16 @@ const SeekerProfile = () => {
               name="password"
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="password"
+              onChange={handleChange}
             />
           </div>
         </div>
         <Button msg="Update" border="rounded-button" />
+        <p className="text-[red] font-poppins">{error? error : ''}</p>
+        {updateSuccess && <p className="text-[green] font-poppins my-3 text-start">Profile Updated Successfully!</p>}
         <div className=" bg-[gray] h-1  my-2" />
         <div className="flex flex-row justify-between items-center mt-2 mb-2">
-          <button className="font-poppins text-[#B91C1C]  ">
+          <button className="font-poppins text-[#B91C1C]   ">
             Delete Account
           </button>
           <button className="font-poppins text-[#22C55E]  ">

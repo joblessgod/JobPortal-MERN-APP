@@ -42,9 +42,9 @@ export const logIn = async (req, res, next) => {
    if(!validPassword){
       return next(errorHandler(402,"Wrong Credentials!"));
   }
-  const token = Jwt.sign({id:validUser._id},process.env.JWT_TOKEN);
+  const token = Jwt.sign({id:validUser._id,usertype:validUser.usertype},process.env.JWT_TOKEN);
   const {password:pass,...rest} = validUser._doc
-  res.cookie('acces token',token,{httpOnly:true}).status(200).json(rest);
+  res.cookie('access_token',token,{httpOnly:true}).status(200).json(rest);
 }catch(error){
   next(error);
 }
@@ -58,14 +58,70 @@ export const logIn = async (req, res, next) => {
          if(!validPassword){
             return next(errorHandler(402,"Wrong Credentials!"));
         }
-        const token = Jwt.sign({id:validUser._id},process.env.JWT_TOKEN);
+        const token = Jwt.sign({id:validUser._id,usertype:validUser.usertype},process.env.JWT_TOKEN);
         const {password:pass,...rest} = validUser._doc
-        res.cookie('acces token',token,{httpOnly:true}).status(200).json(rest);
+        res.cookie('access_token',token,{httpOnly:true}).status(200).json(rest);
       }catch(error){
         next(error);
       }
    }else{
       return next(errorHandler(404,"Please Select who the fuck are you!"))
    }
+}
+
+//update user
+export const updateUser = async (req,res,next)=>{
+  
+     if(req.user.usertype === "seeker"){
+      if(req.user.id !== req.params.id){
+  return next(errorHandler(401,"You are no authorized to make this change!"))
+      }
+      try{
+   if(req.body.password){
+      req.body.password = bcryptjs.hashSync(req.body.password,10);
+   }
+   const updateSeeker = await User.findByIdAndUpdate(req.params.id,{
+      $set:{
+         name:req.body.name,
+         email:req.body.email,
+         pjobcategory:req.body.pjobcategory,
+         phone:req.body.phone,
+         password:req.body.password,
+         avatar:req.body.avatar
+      }
+   },
+   {new:true}
+   )
+ const {password,...rest} = updateSeeker._doc
+ res.status(200).json(rest);
+      }catch(error){
+         next(error);
+     }
+     }else if(req.user.usertype === "employer") {
+      if(req.user.id !== req.params.id){
+         return next(errorHandler(401,"You are no authorized to make this change!"))
+             }
+             try{
+          if(req.body.password){
+             req.body.password = bcryptjs.hashSync(req.body.password,10);
+          }
+          const updateEmployer = await Employer.findByIdAndUpdate(req.params.id,{
+             $set:{
+                organizationname:req.body.fullname,
+                email:req.body.email,
+                phone:req.body.phone,
+                password:req.body.password,
+                avatar:req.body.avatar
+             }
+          },
+          {new:true}
+          )
+        const {password,...rest} = updateEmployer._doc
+        res.status(200).json(rest);
+             }catch(error){
+                next(error);
+            }
+     }
+  
 }
 
