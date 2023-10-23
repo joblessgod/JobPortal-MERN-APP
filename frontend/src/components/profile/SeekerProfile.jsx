@@ -15,6 +15,7 @@ import {
   updateUserStart,
   deleteUserFailure,deleteUserStart,deleteUserSuccess
 } from "../../redux/user/userSlice.js";
+import SignOut from "./SignOut";
 const SeekerProfile = () => {
   const fileRef = useRef(null);
   const dispatch = useDispatch();
@@ -109,6 +110,7 @@ const SeekerProfile = () => {
       dispatch(deleteUserFailure(error.message))
     }
       }*/
+      //for Delete
      const handleDelete = DeleteProfile();
 
   const handleClickToDelete = async () => {
@@ -116,7 +118,11 @@ const SeekerProfile = () => {
       await handleDelete();
      
     } ;
-  
+  //for signOut
+  const handleSignOut = SignOut();
+  const handleClickToSignOut = async()=>{
+    await handleSignOut();
+  }
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
@@ -258,7 +264,7 @@ const SeekerProfile = () => {
           <button className="font-poppins text-[#22C55E]  ">
             Applied Jobs
           </button>
-          <button className="font-poppins text-[#B91C1C]  ">Sign Out</button>
+          <button onClick={handleClickToSignOut} className="font-poppins text-[#B91C1C] cursor-pointer">Sign Out</button>
         </div>
       </form>
     </div>

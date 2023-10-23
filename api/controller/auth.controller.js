@@ -183,3 +183,12 @@ export const deleteUser = async (req, res, next) => {
     }
   }
 };
+//for signOut
+export const signOut=async (req,res,next)=>{
+  try{
+    res.clearCookie("access_token");
+    res.status(200).json("User Logged OUT!")
+  }catch(error){
+   next(error);
+  }
+}

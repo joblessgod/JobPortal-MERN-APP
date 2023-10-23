@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "../../global/Button";
 import DeleteProfile from "./DeleteProfile";
+import SignOut from "./SignOut";
 import {
   getDownloadURL,
   getStorage,
@@ -112,11 +113,17 @@ dispatch(deleteUserSuccess());
   dispatch(deleteUserFailure(error.message))
 }
   }*/
+  //for delete user
   const handleDelete = DeleteProfile();
 
   const handleClickToDelete = async () => {
     await handleDelete();
   };
+  //for handle signout
+  const handleSignOut = SignOut();
+  const handleClickToSignOut = async()=>{
+    await handleSignOut();
+  }
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
@@ -241,7 +248,7 @@ dispatch(deleteUserSuccess());
             Delete Account
           </span>
           <span className="font-poppins text-[#22C55E]  ">Applied Jobs</span>
-          <button className="font-poppins text-[#B91C1C]  ">Sign Out</button>
+          <button onClick={handleClickToSignOut} className="font-poppins text-[#B91C1C] cursor-pointer ">Sign Out</button>
         </div>
       </form>
     </div>

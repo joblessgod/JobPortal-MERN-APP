@@ -9,7 +9,7 @@ import {
 
 const DeleteProfile = () => {
   const dispatch = useDispatch();
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser,error } = useSelector((state) => state.user);
 
   const handleDelete = async () => {
     try {
