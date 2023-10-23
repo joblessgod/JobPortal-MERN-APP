@@ -1,95 +1,222 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Button from "../../global/Button";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase.js";
+import {
+  updateUserSuccess,
+  updateUserFailure,
+  updateUserStart,
+} from "../../redux/user/userSlice.js";
+const EmployerProfile = () => {
+  const fileRef = useRef(null);
+  const dispatch = useDispatch();
+  const { currentUser,error,loading } = useSelector((state) => state.user);
+  const [file, setFile] = useState(undefined);
+  const [filePerc, setFilePerc] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState(false);
+  const [formData, setFormData] = useState({});
+  const[updateSuccess,setUpdateSuccess] = useState(false);
 
-const SeekerProfile = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  console.log(formData);
+  console.log(filePerc);
+  console.log(fileUploadError);
+
+  // firebase storage
+  // allow read;
+  // allow write: if
+  // request.resource.size < 2 * 1024 * 1024 &&
+  // request.resource.contentType.matches('image/.*')
+
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+    }
+  }, [file]);
+
+  const handleFileUpload = (file) => {
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePerc(Math.round(progress));
+      },
+      (error) => {
+        setFileUploadError(true);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
+          setFormData({ ...formData, avatar: downloadURL })
+        );
+      }
+    );
+  };
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+  console.log(formData);
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/auth/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if(data.success === false){
+        dispatch(updateUserFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserFailure(error.message));
+    }
+  };
   return (
     <div className="max-w-4xl m-auto">
-      <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">{currentUser.organizationname}</h1>
-      <img src = {currentUser.avatar} alt = 'profile pic' className="h-24 w-24 rounded-[999px] m-auto"/>
-      <div className="sm:grid sm:grid-cols-2 sm:gap-6  p-3 flex flex-col gap-2">
-     
-      <div className="mb-4">
-        <label
-          htmlFor="name"
-          className="flex justify-start font-poppins text-[#000]    mb-1"
-        >
-          Organization Name
-        </label>
+      <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
+        {currentUser.organizationname}
+      </h1>
+      <form onSubmit={handleUpdateSubmit}>
         <input
-          type="text"
-          id="organizationname"
-          name="companyName"
-          className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
-          placeholder="Name"
-          value={currentUser.organizationname}
+          type="file"
+          onChange={(e) => {
+            setFile(e.target.files[0]);
+          }}
+          ref={fileRef}
+          accept="image/*"
+          hidden
         />
-      </div>
-     
+        <img
+          onClick={() => {
+            fileRef.current.click();
+          }}
+          src={formData.avatar || currentUser.avatar}
+          alt="profile pic"
+          className="h-24 w-24 rounded-[999px] m-auto cursor-pointer"
+        />
+        <p className="text-sm m-2 font-poppins">
+          {fileUploadError ? (
+            <span className="text-[#FF0000]">
+              Error (Image Must be Less Than 2 Mega Byte)
+            </span>
+          ) : filePerc > 0 && filePerc < 100 ? (
+            <span className="text-[gray]">{`Uploading ${filePerc} %`}</span>
+          ) : filePerc === 100 ? (
+            <span className="text-[green]">Image Successfully Uploaded!</span>
+          ) : (
+            ""
+          )}
+        </p>
+        <div className="sm:grid sm:grid-cols-2 sm:gap-6  p-3 flex flex-col gap-2">
+          <div className="mb-4">
+            <label
+              htmlFor="name"
+              className="flex justify-start font-poppins text-[#000]    mb-1"
+            >
+              Organization Full Name
+            </label>
+            <input
+              type="text"
+              id="organizationname"
+              name="companyName"
+              className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
+              placeholder="Full Name Of Name"
+              defaultValue={currentUser.organizationname}
+              onChange={handleChange}
+            />
+          </div>
+         
+              
 
-      <div className="mb-4">
-      <label
-        htmlFor="name"
-        className="flex justify-start font-poppins text-[#000]    mb-1"
-      >
-        Email
-      </label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
-        placeholder="Email"
-        value = {currentUser.email}
-      />
-    </div>
+          <div className="mb-4">
+            <label
+              htmlFor="email"
+              className="flex justify-start font-poppins text-[#000]    mb-1"
+            >
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
+              placeholder="Email"
+              defaultValue={currentUser.email}
+              onChange={handleChange}
+            />
+          </div>
 
-    <div className="mb-4">
-    <label
-      htmlFor="name"
-      className="flex justify-start font-poppins text-[#000]    mb-1"
-    >
-      Mobile No
-    </label>
-    <input
-      type="text"
-      id="phone"
-      name="companyName"
-      className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
-      placeholder="Name"
-      value={currentUser.phone}
-    />
-  </div>
+          <div className="mb-4">
+            <label
+              htmlFor="phone"
+              className="flex justify-start font-poppins text-[#000]    mb-1"
+            >
+              Mobile No
+            </label>
+            <input
+              type="text"
+              id="phone"
+              name="phone"
+              className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
+              placeholder="Phone"
+              defaultValue={currentUser.phone}
+              onChange={handleChange}
+            />
+          </div>
 
-  <div className="mb-4">
-  <label
-    htmlFor="name"
-    className="flex justify-start font-poppins text-[#000]    mb-1"
-  >
-    Password
-  </label>
-  <input
-    type="password"
-    id="password"
-    name="password"
-    className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
-    placeholder="password"
-  />
-</div>
-
-
-</div>
-<Button msg = "Update" border = "rounded-button"/>
-<div className=" bg-[gray] h-1  my-2"/>
-<div className="flex flex-row justify-between items-center p-2 mt-2 mb-2">
-<button className='font-poppins text-[#B91C1C]  ' >Delete Account</button>
-<button className='font-poppins text-[#22C55E]  ' >Listed Jobs</button>
-<button className='font-poppins text-[#B91C1C]  ' >Sign Out</button>
-</div>
-
+          <div className="mb-4">
+            <label
+              htmlFor="password"
+              className="flex justify-start font-poppins text-[#000]    mb-1"
+            >
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
+              placeholder="password"
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+        <Button msg="Update" border="rounded-button" />
+        <p className="text-[red] font-poppins">{error? error : ''}</p>
+        {updateSuccess && <p className="text-[green] font-poppins my-3 text-start">Profile Updated Successfully!</p>}
+        <div className=" bg-[gray] h-1  my-2" />
+        <div className="flex flex-row justify-between items-center mt-2 mb-2">
+          <button className="font-poppins text-[#B91C1C]   ">
+            Delete Account
+          </button>
+          <button className="font-poppins text-[#22C55E]  ">
+            Applied Jobs
+          </button>
+          <button className="font-poppins text-[#B91C1C]  ">Sign Out</button>
+        </div>
+      </form>
     </div>
   );
 };
 
-export default SeekerProfile;
+export default EmployerProfile;
