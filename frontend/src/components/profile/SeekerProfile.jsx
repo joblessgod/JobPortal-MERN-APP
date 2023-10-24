@@ -15,6 +15,7 @@ import {
   updateUserStart,
  
 } from "../../redux/user/userSlice.js";
+import { InfinitySpin } from "react-loader-spinner";
 
 const SeekerProfile = () => {
   const fileRef = useRef(null);
@@ -249,7 +250,12 @@ const SeekerProfile = () => {
             />
           </div>
         </div>
-        <Button msg="Update" border="rounded-button" />
+        <div className="flex flex-row justify-center items-center">
+        {loading ? (<InfinitySpin className = "items-center"
+        width={100}
+        height = {100}
+        color="black"/>):(<Button msg="Update" border="rounded-button" />)}
+        </div>
         <p className="text-[red] font-poppins">{error? error : ''}</p>
         {updateSuccess && <p className="text-[green] font-poppins my-3 text-start">Profile Updated Successfully!</p>}
         <div className=" bg-[gray] h-1  my-2" />

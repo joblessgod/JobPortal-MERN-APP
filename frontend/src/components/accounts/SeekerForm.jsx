@@ -4,6 +4,7 @@ import {AiFillEye} from 'react-icons/ai';
 import {AiFillEyeInvisible} from 'react-icons/ai';
 import Login from "../login/Login";
 import { useNavigate } from "react-router-dom";
+import { InfinitySpin } from "react-loader-spinner";
 const userType = "seeker";
 
   const SeekerForm=()=>{
@@ -181,8 +182,12 @@ const handleSubmit=async(e)=>{
           privacy of JobPortal!
         </p>
 
-        <div className="text-center">
-          <Button msg={loading ? "Loading..." : "Register"} border="rounded-button" />
+        <div className="flex flex-row justify-center items-center">
+        {loading ? (<InfinitySpin  
+          width={100}
+          height = {100}
+          color="black"/>):( <Button msg="Register" border="rounded-button" />)}
+         
         </div>
         {error && <p className="text-[red]  font-poppins text-[0.8rem] mt-4">{error}</p>}
       </form>
