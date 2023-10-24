@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "../../global/Button";
 import DeleteProfile from "./DeleteProfile";
-import SignOut from "./SignOut";
+
 import {
   getDownloadURL,
   getStorage,
@@ -14,9 +14,7 @@ import {
   updateUserSuccess,
   updateUserFailure,
   updateUserStart,
-  deleteUserFailure,
-  deleteUserStart,
-  deleteUserSuccess,
+ 
 } from "../../redux/user/userSlice.js";
 
 const EmployerProfile = () => {
@@ -119,11 +117,7 @@ dispatch(deleteUserSuccess());
   const handleClickToDelete = async () => {
     await handleDelete();
   };
-  //for handle signout
-  const handleSignOut = SignOut();
-  const handleClickToSignOut = async()=>{
-    await handleSignOut();
-  }
+
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
@@ -240,7 +234,7 @@ dispatch(deleteUserSuccess());
           </p>
         )}
         <div className=" bg-[gray] h-1  my-2" />
-        <div className="flex flex-row justify-between items-center mt-2 mb-2">
+        <div className="flex flex-row justify-center gap-12 items-center mt-2 mb-2">
           <span
             onClick={handleClickToDelete}
             className="font-poppins text-[#B91C1C] cursor-pointer  "
@@ -248,7 +242,7 @@ dispatch(deleteUserSuccess());
             Delete Account
           </span>
           <span className="font-poppins text-[#22C55E]  ">Applied Jobs</span>
-          <button onClick={handleClickToSignOut} className="font-poppins text-[#B91C1C] cursor-pointer ">Sign Out</button>
+         
         </div>
       </form>
     </div>

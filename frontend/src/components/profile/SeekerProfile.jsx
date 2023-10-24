@@ -13,9 +13,9 @@ import {
   updateUserSuccess,
   updateUserFailure,
   updateUserStart,
-  deleteUserFailure,deleteUserStart,deleteUserSuccess
+ 
 } from "../../redux/user/userSlice.js";
-import SignOut from "./SignOut";
+
 const SeekerProfile = () => {
   const fileRef = useRef(null);
   const dispatch = useDispatch();
@@ -71,7 +71,7 @@ const SeekerProfile = () => {
       [e.target.id]: e.target.value,
     });
   };
-  console.log(formData);
+  
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -118,11 +118,7 @@ const SeekerProfile = () => {
       await handleDelete();
      
     } ;
-  //for signOut
-  const handleSignOut = SignOut();
-  const handleClickToSignOut = async()=>{
-    await handleSignOut();
-  }
+  
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
@@ -257,14 +253,14 @@ const SeekerProfile = () => {
         <p className="text-[red] font-poppins">{error? error : ''}</p>
         {updateSuccess && <p className="text-[green] font-poppins my-3 text-start">Profile Updated Successfully!</p>}
         <div className=" bg-[gray] h-1  my-2" />
-        <div className="flex flex-row justify-between items-center mt-2 mb-2">
+        <div className="flex flex-row justify-center gap-12 items-center mt-2 mb-2">
           <span onClick={handleClickToDelete} className="font-poppins text-[#B91C1C] cursor-pointer  ">
             Delete Account
           </span>
           <button className="font-poppins text-[#22C55E]  ">
             Applied Jobs
           </button>
-          <button onClick={handleClickToSignOut} className="font-poppins text-[#B91C1C] cursor-pointer">Sign Out</button>
+        
         </div>
       </form>
     </div>
