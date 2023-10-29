@@ -72,6 +72,7 @@ const hideRegisterHandler=()=>{
     <Route path='seekerregister' element = {<JobSeekers />}/>
     <Route path='employer' element = {<Employer />}/>
     <Route path='profile' element = {<Profile />}/>
+    <Route path='jobpost' element = {<JobPost />}/>
     </Routes>
    
     {showLogin && <Login onClose = {hideLoginHandler}/>}

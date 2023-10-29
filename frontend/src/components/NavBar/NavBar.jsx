@@ -46,7 +46,7 @@ const handleLogOut= async()=>{
    {
     
    currentUser && currentUser.usertype === "employer" ? (
-      <Link to="">
+      <Link to="/jobpost">
         <Button msg="Post a job" border="rounded-button" onClick={props.click} />
       
       </Link>
