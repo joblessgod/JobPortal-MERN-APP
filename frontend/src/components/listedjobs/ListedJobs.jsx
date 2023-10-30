@@ -2,10 +2,13 @@ import React from 'react'
 import AllJobs from './AllJobs'
 import Button from '../../global/Button'
 import {HiOutlineArrowCircleRight} from "react-icons/hi"
+import { useSelector } from 'react-redux';
 const ListedJobs = (props) => {
+  const { currentUser } = useSelector((state) => state.user);
+  console.log(currentUser);
   return (
     <div className='p-6 bg-[#FFF] minn:p-2 smmm-maxx:p-2 smmm-max:p-2'>
-    <h2 className='text-[#000] font-poppins font-[600] text-[1.8rem] py-8'>All Popular Listed jobs</h2>
+    <h2 className='text-[#000] font-poppins font-[600] text-[1.8rem] py-8'>{currentUser && currentUser.organizationname}'s jobs</h2>
     <div className='flex flex-col gap-[2rem] px-2 '>
     
     <AllJobs companyname = "Match Company Limited" position = "Senior UI/UX Designer" exp="3" location = "Kathmandu Nepal" site = "Full-Time" salary = "100000" />

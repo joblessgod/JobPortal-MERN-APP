@@ -38,6 +38,10 @@ const joblistSchema   = new mongoose.Schema({
         type:String,
         required:true
     },
+    applicationdeadline:{
+     type:Date,
+     required:true
+    },
     jobdescription:{
         type:String,
         required:true
