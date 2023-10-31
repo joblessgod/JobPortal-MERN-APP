@@ -7,7 +7,7 @@ const Home = () => {
     <div>
     <Header/>
     <Categories />
-    <ListedJobs />
+    <ListedJobs isHomePage={true} />
     </div>
   )
 }
