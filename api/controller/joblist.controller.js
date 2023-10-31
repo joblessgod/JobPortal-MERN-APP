@@ -41,3 +41,22 @@ export const listingJob = async (req, res, next) => {
     }
   
   }
+  //for update the job
+  export const updateJob= async (req,res,next)=>{
+    const listing = await Listedjob.findById(req.params.id);
+    if(!listing){
+      return next(errorHandler(404, "Job Not Found"));
+    }
+    if(req.user.id === listing.userRef){
+  try{
+  const updatedListing = await Listedjob.findByIdAndUpdate(req.params.id,req.body,{new:true});
+  res.status(200).json(updatedListing);
+  }catch(error){
+    next(error);
+  }
+    }else if(req.user.usertype === "seeker" && req.user.id !== listing.userRef){
+      next(errorHandler(401,"Unauthorized Access!"))
+    }else{
+      next(errorHandler(401,"You can only update your own listing"))
+    }
+  }
