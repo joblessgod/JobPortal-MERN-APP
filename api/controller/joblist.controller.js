@@ -60,3 +60,15 @@ export const listingJob = async (req, res, next) => {
       next(errorHandler(401,"You can only update your own listing"))
     }
   }
+  //list of jobs by id
+  export const listofJobsByid= async (req,res,next)=>{
+      try{
+const listing  = await Listedjob.findById(req.params.id)
+if(!listing){
+  next(errorHandler(404,"Job Not Found!"))
+}
+res.status(200).json(listing);
+      }catch(error){
+        next(error);
+      }
+  }

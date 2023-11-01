@@ -12,6 +12,7 @@ import Employer from './components/accounts/Employer'
 import Home from './components/home/Home'
 import Profile from './components/profile/Profile'
 import ListedJobs from './components/listedjobs/ListedJobs'
+import UpdateListing from './components/listedjobs/UpdateListing'
 
 
 
@@ -75,6 +76,7 @@ const hideRegisterHandler=()=>{
     <Route path='profile' element = {<Profile />}/>
     <Route path='jobpost' element = {<JobPost />}/>
     <Route path='listedjob' element = {<ListedJobs />}/>
+    <Route path='updatejob/:id' element = {<UpdateListing />}/>
     </Routes>
    
     {showLogin && <Login onClose = {hideLoginHandler}/>}

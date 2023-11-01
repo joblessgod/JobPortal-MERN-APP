@@ -1,11 +1,15 @@
 import React from 'react'
-import Button from '../../global/Button';
+import { useSelector } from 'react-redux';
 import download from '../../assets/images/download.png'
 import {MdOutlineLocationOn} from 'react-icons/md';
 import {FcClock} from 'react-icons/fc'
 import {SiCashapp} from 'react-icons/si'
-
+import {AiFillEye} from 'react-icons/ai';
+import {BiPencil} from 'react-icons/bi';
+import {BsTrash} from 'react-icons/bs';
+import { Link } from 'react-router-dom';
 const AllJobs = (props) => {
+  const { currentUser } = useSelector((state) => state.user);
   return (
    
     <div className='flex  flex-row justify-between items-center divv  p-4 sm-max:flex-col   '>
@@ -33,10 +37,14 @@ const AllJobs = (props) => {
 
     </div>
     </div>
-    <div className=' w-[fit-content]  '>
-  <Button msg="View Details" border = "rounded-button" />
+    {currentUser && currentUser.usertype === "employer" ? 
+    <div className=' w-[fit-content] flex  md:flex md:flex-col gap-5 '>
+    <AiFillEye size={20} color = "green" className='cursor-pointer'/>
+    <Link className='cursor-pointer' to = {`/updatejob/${props.id}`}><BiPencil size={20} color = "black" /></Link>
+    <BsTrash size={20} color = "red" className='cursor-pointer'/>
+    </div> :  <AiFillEye size={20} color = "green" className='cursor-pointer'/>
+  }
    
-  </div>
   
   </div>
    

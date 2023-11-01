@@ -196,7 +196,7 @@ const SeekerProfile = () => {
               <option value="Teaching">Teaching</option>
             </select>
           </div>
-
+ 
           <div className="mb-4">
             <label
               htmlFor="email"

@@ -17,6 +17,7 @@ const joblistSchema   = new mongoose.Schema({
         required:true,
         
     },
+
     jobtype:{
         type:String,
         required:true,
@@ -41,6 +42,10 @@ const joblistSchema   = new mongoose.Schema({
     applicationdeadline:{
      type:Date,
      required:true
+    },
+    jobqualification:{
+        type:String,
+        required:true
     },
     jobdescription:{
         type:String,

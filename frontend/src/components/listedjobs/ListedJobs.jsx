@@ -60,6 +60,7 @@ const ListedJobs = (props) => {
       {listedJob.slice(0, 10).map((job) => (
         <div className="flex flex-col gap-[2rem] px-2" key={job._id}>
           <AllJobs
+          id = {job._id}
             companyname={job.companyname}
             position={job.jobtitle}
             exp={job.experience}

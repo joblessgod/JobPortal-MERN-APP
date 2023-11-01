@@ -1,63 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../../global/Button";
 import Title from "../../global/Title";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { InfinitySpin } from "react-loader-spinner";
 
-
-const JobPost = () => {
+const UpdateListing = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
   const [jobPostError, setJobPostError] = useState(false);
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const params = useParams();
+  useEffect(() => {
+    const fetchListing = async () => {
+      const jobId = params.id;
+      const res = await fetch(`/api/auth/viewbyid/${jobId}`);
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+      setFormData(data);
+    };
 
+    fetchListing();
+  }, []);
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
   };
-  const handleSubmit= async (e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setJobPostError(null);
     if (new Date(formData.applicationdeadline) < new Date()) {
       return setJobPostError(
         "Application Deadline should not be before the current date!"
-       
       );
-      
     }
-    try{
-      setLoading(true)
-   const res = await fetch('/api/auth/create',{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      ...formData,userRef:currentUser._id
-    })
-   })
-   const data = res.json();
-   if(data.success === false){
-    setJobPostError(data.message);
-    setLoading(false);
-   }
-   navigate('/listedjob');
-   setLoading(false);
-   
-    }catch(error){
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/auth/jobupdate/${params.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          userRef: currentUser._id,
+        }),
+      });
+      const data = res.json();
+      if (data.success === false) {
+        setJobPostError(data.message);
+        setLoading(false);
+      }
+      navigate("/listedjob");
       setLoading(false);
-  setJobPostError(error);
+    } catch (error) {
+      setLoading(false);
+      setJobPostError(error);
     }
-  }
-  console.log(jobPostError);
+  };
+  console.log(formData);
+ 
+  const dateObject = new Date(formData.applicationdeadline);
+  const formattedDate = dateObject.toISOString().split('T')[0];
+
+  
   return (
     <div>
-      <Title title="Post a Job" />
+      <Title title="Update a Job" />
       <div className="w-[full] my-3 md:p-4 lg:p-4 xl:p-4 2xl:p-4">
         <div className="mx-auto bg-white p-6 rounded shadow-lg border border-[#D6D6D6] rounded-[0.625rem]">
           <form onSubmit={handleSubmit}>
@@ -76,6 +92,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Name"
                   onChange={handleChange}
+                  defaultValue={formData.companyname}
                   required
                 />
               </div>
@@ -93,6 +110,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Website Link"
                   onChange={handleChange}
+                  defaultValue={formData.companywebsite}
                   required
                 />
               </div>
@@ -111,6 +129,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Title"
                   onChange={handleChange}
+                  defaultValue={formData.jobtitle}
                   required
                 />
               </div>
@@ -127,6 +146,7 @@ const JobPost = () => {
                   name="jobCategory"
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   onChange={handleChange}
+                  value={formData.jobcategory}
                   required
                 >
                   <option value="IT">IT</option>
@@ -146,13 +166,13 @@ const JobPost = () => {
                   name="jobCategory"
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   onChange={handleChange}
-                 
+                  value={formData.jobtype}
                   required
                 >
-               
                   <option value="Full-Time">Full-Time</option>
                   <option value="Part-Time">Part-Time</option>
                   <option value="Remote">Remote</option>
+                 
                 </select>
               </div>
 
@@ -170,6 +190,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4] "
                   placeholder="Location"
                   onChange={handleChange}
+                  defaultValue={formData.joblocation}
                   required
                 />
               </div>
@@ -187,6 +208,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4] "
                   placeholder="Salary Range"
                   onChange={handleChange}
+                  defaultValue={formData.salary}
                   required
                 />
               </div>
@@ -205,6 +227,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Experience"
                   onChange={handleChange}
+                  defaultValue={formData.experience}
                   required
                 />
               </div>
@@ -217,11 +240,12 @@ const JobPost = () => {
                 </label>
                 <input
                   type="text"
-                  id="jobqualification"
+                  id="qualification"
                   name="qualification"
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Qualification"
                   onChange={handleChange}
+                  defaultValue={formData.jobqualification}
                   required
                 />
               </div>
@@ -240,6 +264,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Job Application Deadline"
                   onChange={handleChange}
+                  value={formattedDate}
                   required
                 />
               </div>
@@ -258,6 +283,7 @@ const JobPost = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Job Application URL"
                   onChange={handleChange}
+                  defaultValue={formData.jobapplicationlink}
                   required
                 />
               </div>
@@ -276,19 +302,18 @@ const JobPost = () => {
                   rows="4"
                   placeholder="Job Description"
                   onChange={handleChange}
+                  defaultValue={formData.jobdescription}
                   required
                 />
               </div>
             </div>
-          <p className="text-[red]">{jobPostError ? (jobPostError) : ""}</p>
+            <p className="text-[red]">{jobPostError ? jobPostError : ""}</p>
             <div className="text-right">
-            {loading ? (<InfinitySpin 
-              width={100}
-              height = {100}
-             
-              color="black"
-            />):(
-              <Button msg="Post a Job" border="rounded-button" />)}
+              {loading ? (
+                <InfinitySpin width={100} height={100} color="black" />
+              ) : (
+                <Button msg="Post a Job" border="rounded-button" />
+              )}
             </div>
           </form>
         </div>
@@ -297,4 +322,4 @@ const JobPost = () => {
   );
 };
 
-export default JobPost;
+export default UpdateListing;
