@@ -72,3 +72,22 @@ res.status(200).json(listing);
         next(error);
       }
   }
+  //delete the listing
+  export const deleteListing= async(req,res,next)=>{
+    const listing = await Listedjob.findById(req.params.id)
+    if(!listing){
+      return next(errorHandler(404,"Job is Not Found"))
+    }
+    if(req.user.id !== listing.userRef){
+      return next(errorHandler(401,"You can only delete your listing!"))
+    }
+    if(req.user.usertype === "seeker"){
+      return next(errorHandler(401,"Unauthorized Access!"))
+    }
+    try{
+   await Listedjob.findByIdAndDelete(req.params.id);
+   res.status(200).json("successfully deleted the job")
+    }catch(error){
+      next(error);
+    }
+  }
