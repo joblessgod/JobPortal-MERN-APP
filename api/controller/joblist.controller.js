@@ -29,7 +29,7 @@ export const listingJob = async (req, res, next) => {
       }catch(error){
   next(error);
       }
-    }else if(req.user && req.user.usertype === "seeker" && !req.params.id){
+    }else if(!req.params.id){
       try{
   const listofjob = await Listedjob.find();
   res.status(200).json(listofjob);
