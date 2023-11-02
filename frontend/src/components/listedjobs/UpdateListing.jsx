@@ -29,14 +29,12 @@ const UpdateListing = () => {
 
     fetchListing();
   }, []);
-  const handleDesc = (newDesc) => {
-    setJobDescription(newDesc);
-  };
+ 
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      jobdescription,
+     
       [e.target.id]: e.target.value,
     });
   };
@@ -82,11 +80,11 @@ const UpdateListing = () => {
     // You can use formattedDate here
   } else {
     console.log("Date object is not valid");
-    // Handle the case where formData.applicationdeadline is not a valid date
+   
     // You can provide a default value for formattedDate or take other appropriate action.
   }
 
-  // Now you can use formattedDate outside of the if statement
+console.log(formData);
 
   return (
     <div>
@@ -109,7 +107,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Name"
                   onChange={handleChange}
-                  defaultValue={formData.companyname}
+                  value={formData.companyname}
                   required
                 />
               </div>
@@ -127,7 +125,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Website Link"
                   onChange={handleChange}
-                  defaultValue={formData.companywebsite}
+                  value={formData.companywebsite}
                   required
                 />
               </div>
@@ -146,7 +144,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Title"
                   onChange={handleChange}
-                  defaultValue={formData.jobtitle}
+                  value={formData.jobtitle}
                   required
                 />
               </div>
@@ -206,7 +204,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4] "
                   placeholder="Location"
                   onChange={handleChange}
-                  defaultValue={formData.joblocation}
+                  value={formData.joblocation}
                   required
                 />
               </div>
@@ -224,7 +222,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4] "
                   placeholder="Salary Range"
                   onChange={handleChange}
-                  defaultValue={formData.salary}
+                  value={formData.salary}
                   required
                 />
               </div>
@@ -243,7 +241,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Experience"
                   onChange={handleChange}
-                  defaultValue={formData.experience}
+                  value={formData.experience}
                   required
                 />
               </div>
@@ -261,7 +259,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Qualification"
                   onChange={handleChange}
-                  defaultValue={formData.jobqualification}
+                  value={formData.jobqualification}
                   required
                 />
               </div>
@@ -299,7 +297,7 @@ const UpdateListing = () => {
                   className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
                   placeholder="Job Application URL"
                   onChange={handleChange}
-                  defaultValue={formData.jobapplicationlink}
+                  value={formData.jobapplicationlink}
                   required
                 />
               </div>
@@ -313,8 +311,9 @@ const UpdateListing = () => {
                 </label>
                 <ReactQuill
                   theme="snow"
+                  value={formData.jobdescription}
                  
-                  onChange={handleDesc}
+                  onChange={(newDesc) => setFormData({ ...formData, jobdescription: newDesc })}
                   className="h-[7rem]"
                 />
                 {/* 
