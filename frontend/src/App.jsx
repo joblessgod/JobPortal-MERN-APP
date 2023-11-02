@@ -13,6 +13,7 @@ import Home from './components/home/Home'
 import Profile from './components/profile/Profile'
 import ListedJobs from './components/listedjobs/ListedJobs'
 import UpdateListing from './components/listedjobs/UpdateListing'
+import PrivateRoute from './components/privateroute/PrivateRoute'
 
 
 
@@ -71,12 +72,18 @@ const hideRegisterHandler=()=>{
     <NavBar onShowLogin = {showLoginHandler} onShowRegister = {showRegisterHandler} /> 
     <Routes>
     <Route path='/' element={<Home />} />
+    
     <Route path='seekerregister' element = {<JobSeekers />}/>
     <Route path='employer' element = {<Employer />}/>
+    <Route path='listedjob' element = {<ListedJobs />}/>
+    <Route element = {<PrivateRoute />}>
     <Route path='profile' element = {<Profile />}/>
     <Route path='jobpost' element = {<JobPost />}/>
-    <Route path='listedjob' element = {<ListedJobs />}/>
+    
     <Route path='updatejob/:id' element = {<UpdateListing />}/>
+    </Route>
+    
+    
     </Routes>
    
     {showLogin && <Login onClose = {hideLoginHandler}/>}
