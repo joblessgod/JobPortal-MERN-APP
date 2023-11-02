@@ -4,10 +4,13 @@ import Title from "../../global/Title";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { InfinitySpin } from "react-loader-spinner";
+import ReactQuill from "react-quill";
+import "quill/dist/quill.snow.css";
 
 const UpdateListing = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({});
+  const [jobdescription, setJobDescription] = useState("");
   const [jobPostError, setJobPostError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -26,9 +29,14 @@ const UpdateListing = () => {
 
     fetchListing();
   }, []);
+  const handleDesc = (newDesc) => {
+    setJobDescription(newDesc);
+  };
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
+      jobdescription,
       [e.target.id]: e.target.value,
     });
   };
@@ -65,20 +73,29 @@ const UpdateListing = () => {
       setJobPostError(error);
     }
   };
-  console.log(formData);
- 
-  const dateObject = new Date(formData.applicationdeadline);
-  const formattedDate = dateObject.toISOString().split('T')[0];
 
-  
+  const dateObject = new Date(formData.applicationdeadline);
+  let formattedDate; // Declare it here
+
+  if (dateObject instanceof Date && !isNaN(dateObject)) {
+    formattedDate = dateObject.toISOString().split("T")[0];
+    // You can use formattedDate here
+  } else {
+    console.log("Date object is not valid");
+    // Handle the case where formData.applicationdeadline is not a valid date
+    // You can provide a default value for formattedDate or take other appropriate action.
+  }
+
+  // Now you can use formattedDate outside of the if statement
+
   return (
     <div>
       <Title title="Update a Job" />
-      <div className="w-[full] my-3 md:p-4 lg:p-4 xl:p-4 2xl:p-4">
+      <div className="w-[full] my-3 md:p-4 lg:p-4 xl:p-4 2xl:p-4 m-auto">
         <div className="mx-auto bg-white p-6 rounded shadow-lg border border-[#D6D6D6] rounded-[0.625rem]">
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col  md:grid md:grid-cols-2 md:gap-6 lg:grid lg:grid-cols-2 lg:gap-6 xl:grid xl:grid-cols-2 xl:gap-6 2xl:grid 2xl:grid-cols-2 2xl:gap-6">
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="companyName"
                   className="flex justify-start font-poppins text-[#000]  md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -96,7 +113,7 @@ const UpdateListing = () => {
                   required
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="companyWebsite"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -115,7 +132,7 @@ const UpdateListing = () => {
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="jobTitle"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem]  lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -134,7 +151,7 @@ const UpdateListing = () => {
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="jobCategory"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -154,7 +171,7 @@ const UpdateListing = () => {
                   <option value="Plumbing">Plumbing</option>
                 </select>
               </div>
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="jobType"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -172,11 +189,10 @@ const UpdateListing = () => {
                   <option value="Full-Time">Full-Time</option>
                   <option value="Part-Time">Part-Time</option>
                   <option value="Remote">Remote</option>
-                 
                 </select>
               </div>
 
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="jobLocation"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -194,7 +210,7 @@ const UpdateListing = () => {
                   required
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="salaryRange"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -213,7 +229,7 @@ const UpdateListing = () => {
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="experience"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -231,7 +247,7 @@ const UpdateListing = () => {
                   required
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="qualification"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -250,7 +266,7 @@ const UpdateListing = () => {
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="applicationDeadline"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -269,7 +285,7 @@ const UpdateListing = () => {
                 />
               </div>
 
-              <div className="mb-4">
+              <div className="mb-1 ">
                 <label
                   htmlFor="jobApplicationLink"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
@@ -288,32 +304,42 @@ const UpdateListing = () => {
                 />
               </div>
 
-              <div className="col-span-2 mb-4">
+              <div className="col-span-2 mb-4 ">
                 <label
                   htmlFor="jobDescription"
                   className="flex justify-start font-poppins text-[#000] md:text-[1.5625rem] lg:text-[1.5625rem] xl:text-[1.5625rem] 2xl:text-[1.5625rem] font=[500]  mb-1"
                 >
                   Job Description
                 </label>
-                <textarea
-                  id="jobdescription"
-                  name="jobDescription"
-                  className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
-                  rows="4"
-                  placeholder="Job Description"
-                  onChange={handleChange}
-                  defaultValue={formData.jobdescription}
-                  required
+                <ReactQuill
+                  theme="snow"
+                 
+                  onChange={handleDesc}
+                  className="h-[7rem]"
                 />
+                {/* 
+            <textarea
+             
+                id="jobdescription"
+                name="jobDescription"
+                className="w-full p-4 border border-[#D6D6D6] rounded-[0.625rem] bg-[#fff] font-poppins text-[#AEB0B4]"
+                rows="4"
+                placeholder="Job Description"
+                onChange={handleChange}
+                required
+              />
+            
+            */}
               </div>
-            </div>
-            <p className="text-[red]">{jobPostError ? jobPostError : ""}</p>
-            <div className="text-right">
-              {loading ? (
-                <InfinitySpin width={100} height={100} color="black" />
-              ) : (
-                <Button msg="Post a Job" border="rounded-button" />
-              )}
+
+              <p className="text-[red]">{jobPostError ? jobPostError : ""}</p>
+              <div className="text-right p-3">
+                {loading ? (
+                  <InfinitySpin width={100} height={100} color="black" />
+                ) : (
+                  <Button msg="Post a Job" border="rounded-button" />
+                )}
+              </div>
             </div>
           </form>
         </div>

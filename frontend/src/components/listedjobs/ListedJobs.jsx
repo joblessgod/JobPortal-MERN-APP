@@ -11,7 +11,7 @@ const ListedJobs = (props) => {
   const { isHomePage } = props;
   const [listedJob, setListedJob] = useState([]);
   const [jobShowError, setJobShowError] = useState(false);
-  const[currentpage,setCurrentpage] = useState(2);
+
    const navigate = useNavigate();
   useEffect(() => {
     const fetchListedJob = async () => {
@@ -39,6 +39,9 @@ const ListedJobs = (props) => {
     };
     fetchListedJob();
   }, [currentUser && currentUser._id]);
+  
+ 
+
  //view more
  const handleViewMore=()=>{
   navigate('/listedjob');
@@ -67,6 +70,7 @@ const ListedJobs = (props) => {
             location={job.joblocation}
             site={job.jobtype}
             salary={job.salary}
+            
           />
         </div>
       ))}
