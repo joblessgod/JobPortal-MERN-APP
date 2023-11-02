@@ -47,6 +47,31 @@ const ListedJobs = (props) => {
   navigate('/listedjob');
  }
  
+//delete a job
+const handleJobDelete = async (id) => {
+  try {
+    // Send a request to delete the job with the given id
+    const res = await fetch(`/api/auth/listedjob/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await res.json();
+    
+    if (data.success === false) {
+      console.log(data.message);
+      
+    } 
+    const updatedListedJob = listedJob.filter((job) => job._id !== id);
+    console.log("Job deleted successfully. Updated list:", updatedListedJob);
+    setListedJob(updatedListedJob);
+  } catch (error) {
+    // Handle any errors that occur during the deletion process
+    console.error("Error deleting job: ", error);
+  }
+};
 
 
   return (
@@ -70,6 +95,7 @@ const ListedJobs = (props) => {
             location={job.joblocation}
             site={job.jobtype}
             salary={job.salary}
+            handleJobDelete={handleJobDelete}
             
           />
         </div>

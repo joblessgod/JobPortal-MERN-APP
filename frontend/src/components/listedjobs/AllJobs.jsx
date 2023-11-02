@@ -11,9 +11,7 @@ import { Link } from 'react-router-dom';
 const AllJobs = (props) => {
   
   const { currentUser } = useSelector((state) => state.user);
-  const handleJobDelete=async (id)=>{
-    
-  }
+ 
   return (
    
     <div className='flex  flex-row justify-between items-center divv  p-4 sm-max:flex-col   '>
@@ -45,7 +43,7 @@ const AllJobs = (props) => {
     <div className=' w-[fit-content] flex  md:flex md:flex-col gap-5 '>
     <AiFillEye size={20} color = "green" className='cursor-pointer'/>
     <Link className='cursor-pointer' to = {`/updatejob/${props.id}`}><BiPencil size={20} color = "black" /></Link>
-    <BsTrash onClick={()=>handleJobDelete(props.id)} size={20} color = "red"  className='cursor-pointer'/>
+    <BsTrash onClick={() => props.handleJobDelete(props.id)} size={20} color = "red"  className='cursor-pointer'/>
     </div> :  <AiFillEye size={20} color = "green" className='cursor-pointer'/>
   }
    
