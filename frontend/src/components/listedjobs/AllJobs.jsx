@@ -1,4 +1,4 @@
-import React from 'react'
+import React,{useState} from 'react'
 import { useSelector } from 'react-redux';
 import download from '../../assets/images/download.png'
 import {MdOutlineLocationOn} from 'react-icons/md';
@@ -8,9 +8,12 @@ import {AiFillEye} from 'react-icons/ai';
 import {BiPencil} from 'react-icons/bi';
 import {BsTrash} from 'react-icons/bs';
 import { Link } from 'react-router-dom';
+import Pagination from '../../global/Pagination';
+
 const AllJobs = (props) => {
   
   const { currentUser } = useSelector((state) => state.user);
+  
  
   return (
    
@@ -46,11 +49,13 @@ const AllJobs = (props) => {
     <BsTrash onClick={() => props.handleJobDelete(props.id)} size={20} color = "red"  className='cursor-pointer'/>
     </div> :  <AiFillEye size={20} color = "green" className='cursor-pointer'/>
   }
-   
+ 
+ 
   
   </div>
+
    
-   
+  
     
   )
 }

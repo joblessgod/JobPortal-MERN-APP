@@ -5,14 +5,16 @@ import { HiOutlineArrowCircleRight } from "react-icons/hi";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FcNext, FcPrevious } from "react-icons/fc";
+import Pagination from "../../global/Pagination";
 const ListedJobs = (props) => {
- 
   const { currentUser } = useSelector((state) => state.user);
   const { isHomePage } = props;
   const [listedJob, setListedJob] = useState([]);
   const [jobShowError, setJobShowError] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [postsPerPage, setPostsPerPage] = useState(1);
 
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchListedJob = async () => {
       try {
@@ -39,40 +41,41 @@ const ListedJobs = (props) => {
     };
     fetchListedJob();
   }, [currentUser && currentUser._id]);
-  
- 
 
- //view more
- const handleViewMore=()=>{
-  navigate('/listedjob');
- }
- 
-//delete a job
-const handleJobDelete = async (id) => {
-  try {
-    // Send a request to delete the job with the given id
-    const res = await fetch(`/api/auth/listedjob/${id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  //view more
+  const handleViewMore = () => {
+    navigate("/joblists");
+  };
 
-    const data = await res.json();
-    
-    if (data.success === false) {
-      console.log(data.message);
-      
-    } 
-    const updatedListedJob = listedJob.filter((job) => job._id !== id);
-    console.log("Job deleted successfully. Updated list:", updatedListedJob);
-    setListedJob(updatedListedJob);
-  } catch (error) {
-    // Handle any errors that occur during the deletion process
-    console.error("Error deleting job: ", error);
-  }
-};
+  //delete a job
+  const handleJobDelete = async (id) => {
+    try {
+      // Send a request to delete the job with the given id
+      const res = await fetch(`/api/auth/listedjob/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
+      const data = await res.json();
+
+      if (data.success === false) {
+        console.log(data.message);
+      }
+      const updatedListedJob = listedJob.filter((job) => job._id !== id);
+
+      setListedJob(updatedListedJob);
+    } catch (error) {
+      // Handle any errors that occur during the deletion process
+      console.error("Error deleting job: ", error);
+    }
+  };
+  //pagination
+  const lastPostIndex = currentPage * postsPerPage;
+  const firstPostIndex = lastPostIndex - postsPerPage;
+  const currentPosts = listedJob.slice(firstPostIndex, lastPostIndex);
+  console.log(props.job);
 
   return (
     <div className="p-6 bg-[#FFF] minn:p-2 smmm-maxx:p-2 smmm-max:p-2">
@@ -85,10 +88,11 @@ const handleJobDelete = async (id) => {
         </h2>
       )}
 
-      {listedJob.slice(0, 10).map((job) => (
+      {currentPosts.map((job) => (
         <div className="flex flex-col gap-[2rem] px-2" key={job._id}>
           <AllJobs
-          id = {job._id}
+          listedJob = {listedJob}
+            id={job._id}
             companyname={job.companyname}
             position={job.jobtitle}
             exp={job.experience}
@@ -96,7 +100,10 @@ const handleJobDelete = async (id) => {
             site={job.jobtype}
             salary={job.salary}
             handleJobDelete={handleJobDelete}
-            
+            totalPosts={listedJob.length}
+            postsPerPage={postsPerPage}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
           />
         </div>
       ))}
@@ -111,7 +118,7 @@ const handleJobDelete = async (id) => {
           box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.15);
         }
       `}</style>
-      {isHomePage ? (
+    {/*  {isHomePage ? (
         <div className="inline-block p-[1.5rem]">
           <Button
             onClick={handleViewMore}
@@ -120,11 +127,15 @@ const handleJobDelete = async (id) => {
             icon={HiOutlineArrowCircleRight}
           />
         </div>
-      ) :  <div className="flex justify-center mt-5 gap-3">
-      <FcPrevious size={25} color="green" className="cursor-pointer" />
-      <FcNext color = "green" size={25} className="cursor-pointer" />
-    </div>}
-      
+      ) : (
+        <div className="flex justify-center mt-5 gap-3">
+          <FcPrevious size={25} color="green" className="cursor-pointer" />
+          <FcNext color="green" size={25} className="cursor-pointer" />
+        </div>
+      )} */}
+      <div className="flex justify-center p-2">
+      {listedJob && <Pagination totalPosts = {listedJob.length} postsPerPage = {postsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>}
+      </div>
     </div>
   );
 };
