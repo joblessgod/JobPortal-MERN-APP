@@ -44,10 +44,10 @@ const AllJobs = (props) => {
     </div>
     {currentUser && currentUser.usertype === "employer" ? 
     <div className=' w-[fit-content] flex  md:flex md:flex-col gap-5 '>
-    <AiFillEye size={20} color = "green" className='cursor-pointer'/>
+    <Link to =  {`/jobdetails/${props.id}`}><AiFillEye size={20} color = "green" className='cursor-pointer'/></Link> 
     <Link className='cursor-pointer' to = {`/updatejob/${props.id}`}><BiPencil size={20} color = "black" /></Link>
     <BsTrash onClick={() => props.handleJobDelete(props.id)} size={20} color = "red"  className='cursor-pointer'/>
-    </div> :  <AiFillEye size={20} color = "green" className='cursor-pointer'/>
+    </div> : <Link to = {`/jobdetails/${props.id}`}><AiFillEye size={20} color = "green" className='cursor-pointer'/></Link> 
   }
  
  

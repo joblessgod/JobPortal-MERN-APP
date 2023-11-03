@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import AllJobs from "./AllJobs";
 import Button from "../../global/Button";
-import { HiOutlineArrowCircleRight } from "react-icons/hi";
+
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FcNext, FcPrevious } from "react-icons/fc";
+
 import Pagination from "../../global/Pagination";
 const ListedJobs = (props) => {
   const { currentUser } = useSelector((state) => state.user);

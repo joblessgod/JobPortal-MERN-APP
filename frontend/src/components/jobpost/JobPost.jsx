@@ -1,23 +1,22 @@
-import React, { useState, useRef,useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Button from "../../global/Button";
 import Title from "../../global/Title";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { InfinitySpin } from "react-loader-spinner";
-import ReactQuill from 'react-quill';
-import 'quill/dist/quill.snow.css';
+import ReactQuill from "react-quill";
+import "quill/dist/quill.snow.css";
 
 const JobPost = () => {
   const { currentUser } = useSelector((state) => state.user);
-  const [jobdescription, setJobDescription] = useState('');
+  const [jobdescription, setJobDescription] = useState("");
   const [formData, setFormData] = useState({});
   const [jobPostError, setJobPostError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-
   //for text editor
-console.log(jobdescription);
+  console.log(jobdescription);
 
   const handleChange = (e) => {
     setFormData({
@@ -44,7 +43,7 @@ console.log(jobdescription);
         },
         body: JSON.stringify({
           ...formData,
-          jobdescription:jobdescription,
+          jobdescription: jobdescription,
           userRef: currentUser._id,
         }),
       });
@@ -269,7 +268,6 @@ console.log(jobdescription);
                   onChange={handleChange}
                   required
                 />
-
               </div>
 
               <div className="col-span-2 mb-4">
@@ -279,7 +277,15 @@ console.log(jobdescription);
                 >
                   Job Description
                 </label>
-                <ReactQuill theme = "snow" placeholder="Enter Job Description"  value={jobdescription}  onChange={newJobdescreption=>setJobDescription(newJobdescreption)} className="h-[7rem]" />
+                <ReactQuill
+                  theme="snow"
+                  placeholder="Enter Job Description"
+                  value={jobdescription}
+                  onChange={(newJobdescreption) =>
+                    setJobDescription(newJobdescreption)
+                  }
+                  className="h-[7rem]"
+                />
                 {/* 
               <textarea
                
@@ -293,17 +299,16 @@ console.log(jobdescription);
                 />
               
               */}
-               
               </div>
-           
-            <p className="text-[red]">{jobPostError ? jobPostError : ""}</p>
-            <div className="text-right p-3">
-              {loading ? (
-                <InfinitySpin width={100} height={100} color="black" />
-              ) : (
-                <Button msg="Post a Job" border="rounded-button" />
-              )}
-            </div>
+
+              <p className="text-[red]">{jobPostError ? jobPostError : ""}</p>
+              <div className="text-right p-3">
+                {loading ? (
+                  <InfinitySpin width={100} height={100} color="black" />
+                ) : (
+                  <Button msg="Post a Job" border="rounded-button" />
+                )}
+              </div>
             </div>
           </form>
         </div>

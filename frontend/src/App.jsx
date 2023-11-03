@@ -14,6 +14,7 @@ import Profile from './components/profile/Profile'
 import ListedJobs from './components/listedjobs/ListedJobs'
 import UpdateListing from './components/listedjobs/UpdateListing'
 import PrivateRoute from './components/privateroute/PrivateRoute'
+import JobDetails from './components/JobDetails'
 
 
 
@@ -76,6 +77,7 @@ const hideRegisterHandler=()=>{
     <Route path='seekerregister' element = {<JobSeekers />}/>
     <Route path='employer' element = {<Employer />}/>
     <Route path='listedjob' element = {<ListedJobs />}/>
+    <Route path="jobdetails/:id" element = {<JobDetails />}/>
     <Route element = {<PrivateRoute />}>
     <Route path='profile' element = {<Profile />}/>
     <Route path='jobpost' element = {<JobPost />}/>
