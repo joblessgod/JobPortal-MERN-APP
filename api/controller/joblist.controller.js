@@ -91,3 +91,28 @@ res.status(200).json(listing);
       next(error);
     }
   }
+  //search by title
+  export const searchJobResult = async (req, res, next) => {
+    try {
+      const limit = parseInt(req.query.limit) || 9;
+      const startIndex = parseInt(req.query.startIndex) || 0;
+      const searchTerm = req.query.searchTerm || "";
+  
+      const sort = req.query.sort || 'createdAt'; // Default to 'createdAt'
+      const order = req.query.order || 'desc'; // Default to 'desc'
+  
+      const jobs = await Listedjob.find({
+        jobtitle: { $regex: searchTerm, $options: 'i' }
+      })
+      .sort({ [sort]: order })
+      .limit(limit)
+      .skip(startIndex);
+  
+      return res.status(200).json(jobs);
+    } catch (error) {
+      console.error('Error:', error);
+      next(error);
+    }
+  };
+  
+  

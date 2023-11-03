@@ -28,6 +28,9 @@ const JobPost = () => {
     e.preventDefault();
 
     setJobPostError(null);
+    if (!navigator.onLine) {
+      return setJobPostError("You are offline. Please check your internet connection and try again.");
+    }
     if (new Date(formData.applicationdeadline) < new Date()) {
       return setJobPostError(
         "Application Deadline should not be before the current date!"
