@@ -1,20 +1,44 @@
-import {useState,useEffect} from "react";
+import { useState, useEffect } from "react";
 import Button from "../../global/Button";
-import download from '../../assets/images/download.png'
+import download from "../../assets/images/download.png";
+import { MdOutlineLocationOn } from "react-icons/md";
+import { FcClock } from "react-icons/fc";
+import { SiCashapp } from "react-icons/si";
+import Pagination from "../../global/Pagination";
+import Title from "../../global/Title";
+import { InfinitySpin } from "react-loader-spinner";
 const JobCardList = () => {
-    const [jobss,setJobs] = useState({})
-    useEffect(()=>{
-        const urlParams = new URLSearchParams(location.search);
-        const searchTermFromUrl = urlParams.get('searchTerm');
-        const fetchListings = async()=>{
+  const [jobss, setJobs] = useState([]);
+  const [loading,setLoading] = useState(false);
+  const [showError,setShowError] = useState(null);
+  const [searchTermFromUrls, setSearchTermFromUrl] = useState(null);
+  const [currentPage,setCurrentPage] = useState(1);
+    const[postsPerPage,setPostsPerPage] = useState(12)
+  useEffect(() => {
+    
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get("searchTerm");
+    setSearchTermFromUrl(searchTermFromUrl);
+    const fetchListings = async () => {
+        try{
+            setLoading(true);
             const searchQuery = urlParams.toString();
             const res = await fetch(`/api/auth/getjobs?${searchQuery}`);
             const data = await res.json();
+            if(data.success === false){
+                setLoading(false);
+                setShowError(data.message);
+            }
             setJobs(data);
-            
-        };
-        fetchListings();
-    },[location.search])
+            setLoading(false);
+        }catch(error){
+            setLoading(false);
+            setShowError(error);
+        }
+     
+    };
+    fetchListings();
+  }, [location.search]);
   const jobs = [
     {
       avatar: "company1.jpg",
@@ -53,34 +77,52 @@ const JobCardList = () => {
       salary: "$100,000",
     },
   ];
-console.log(jobss);
+  console.log(searchTermFromUrls);
+   //pagination logic
+   const lastPostIndex = currentPage * postsPerPage;
+   const firstPostIndex = lastPostIndex - postsPerPage;
+   const currentPosts = jobss.slice(firstPostIndex,lastPostIndex)
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto py-2">
+    <Title title = {`Search For : ${searchTermFromUrls}`}/>
+    {loading && <div className="flex justify-center"><InfinitySpin width={200} height={200} color="black" /></div>}
+    {showError && <p className="text-[red]">{showError}</p>}
+    {!loading && currentPosts.length === 0 && <p className="text-[red] font-poppins font-semibold my-3">No Result Found!</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 font-poppins my-3">
-        {jobs.map((job, index) => (
-          <div key={index} className="border border-[whitesmoke] rounded-[1rem] p-4 shadow-xl hover:shadow-2xl">
+        {currentPosts.map((job, index) => (
+          <div
+            key={index}
+            className="border border-[whitesmoke] rounded-[1rem] p-4 shadow-xl hover:shadow-2xl"
+          >
             <img
               src={download}
               alt="Company Avatar"
               className="w-16 h-16 mx-auto rounded-[50%]"
             />
-            <p className="text-center text-[1.125rem] font-semibold mt-4">{job.companyName}</p>
-            <p className="text-center text-gray-600">{job.jobTitle}</p>
-            <p className="text-center text-gray-600 mt-2">{job.experience} years experience</p>
-            <div className="flex items-center justify-center mt-4">
-              <p className="text-[#718096]">{job.location}</p>
-              <p className="mx-2 text-[#718096]">|</p>
-              <p className="text-[#718096]">{job.jobType}</p>
-              <p className="mx-2 text-[#718096]">|</p>
+            <p className="text-center text-[1.125rem] font-semibold mt-4">
+              {job.companyname}
+            </p>
+            <p className="text-center text-[#718096]">{job.jobtitle}</p>
+            <p className="text-center text-[#718096] mt-2">
+              {job.experience} years of experience
+            </p>
+            <div className="flex items-center justify-center gap-1 text-[0.7rem] mt-4 ">
+            <MdOutlineLocationOn size={15} />
+              <p className="text-[#718096]">{job.joblocation}</p>
+              <FcClock size={15} />
+              <p className="text-[#718096]">{job.jobtype}</p>
+              <SiCashapp size={15} />
               <p className="text-[#718096]">{job.salary}</p>
             </div>
             <div className="mt-4 text-center">
-             <Button msg = "View Details" border = "rounded-button" />
-              
+              <Button msg="View Details" border="rounded-button" />
             </div>
           </div>
         ))}
       </div>
+      <div className="flex justify-center">
+      {jobss && <Pagination totalPosts = {jobss.length} postsPerPage = {postsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>}
+    </div>
     </div>
   );
 };
