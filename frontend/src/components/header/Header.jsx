@@ -4,8 +4,11 @@ import Button from '../../global/Button';
 import JobPost from '../jobpost/JobPost';
 import { Link } from 'react-router-dom';
 
+
 const Header = () => {
   
+ 
+ 
 
   return (
     <div className='bg-[#F6F7FA] flex flex-col md:flex-row border-0'>
@@ -16,18 +19,20 @@ const Header = () => {
         <p className='text-left text-[#616161] font-poppins font-headersubtxt font-400 mt-4'>
           Hand-Picked opportunities to work from home, remotely, freelance, full-time, part-time, contract, and internships.
         </p>
-        <div className='mt-4 md:mt-16 flex'>
+        <form  className='mt-4 md:mt-16 flex'>
           <input
             type='text'
             name='search'
             id='search'
             placeholder='Search by job title...'
             className='focus:outline-none text-center font-700 font-[1.125rem] w-full md:w-auto md:max-w-[350px] placeholder-[#AEB0B4]'
-          />
+         
+           
+            />
           
           <Button msg='Search'  />
           
-        </div>
+        </form>
       </div>
       <div className='md:w-1/2'>
         <img src={glass} alt='Glass' className='w-full h-auto md:h-[100%]' />

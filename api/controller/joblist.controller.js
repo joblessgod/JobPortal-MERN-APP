@@ -36,10 +36,27 @@ export const listingJob = async (req, res, next) => {
       }catch(error){
         next(error);
       }
+    }else if(!req.user){
+      try{
+        const listofjob = await Listedjob.find();
+        res.status(200).json(listofjob);
+            }catch(error){
+              next(error);
+            }
+     
     }else{
       next(errorHandler(402,"Forbidden Request!"));
     }
   
+  }
+  //vie job for guest
+  export const listofJobsforguest= async (req,res,next)=>{
+    try{
+      const listofjob = await Listedjob.find();
+      res.status(200).json(listofjob);
+          }catch(error){
+            next(error);
+          }
   }
   //for update the job
   export const updateJob= async (req,res,next)=>{

@@ -18,10 +18,17 @@ const ListedJobs = (props) => {
   useEffect(() => {
     const fetchListedJob = async () => {
       try {
-        const apiUrl =
-          currentUser.usertype === "employer"
-            ? `/api/auth/view/${currentUser._id}`
-            : "/api/auth/view";
+        let apiUrl;
+        if (currentUser) {
+          if (currentUser.usertype === "seeker") {
+            apiUrl = "/api/auth/viewjobasguest";
+          } else if (currentUser.usertype === "employer") {
+            apiUrl = `/api/auth/view/${currentUser._id}`;
+          }
+        } else if(!currentUser){
+          apiUrl = "/api/auth/viewjobasguest";
+        }
+            
         const res = await fetch(apiUrl, {
           method: "GET",
           headers: {
@@ -29,7 +36,7 @@ const ListedJobs = (props) => {
           },
         });
         const data = await res.json(); // Need to await the JSON data
-
+ 
         if (data.success === false) {
           setJobShowError(data.message);
         } else {
@@ -75,7 +82,8 @@ const ListedJobs = (props) => {
   const lastPostIndex = currentPage * postsPerPage;
   const firstPostIndex = lastPostIndex - postsPerPage;
   const currentPosts = listedJob.slice(firstPostIndex, lastPostIndex);
-  console.log(props.job);
+  
+ 
 
   return (
     <div className="p-6 bg-[#FFF] minn:p-2 smmm-maxx:p-2 smmm-max:p-2">
