@@ -17,6 +17,7 @@ import {
  
 } from "../../redux/user/userSlice.js";
 import { InfinitySpin } from "react-loader-spinner";
+import { Link } from "react-router-dom";
 
 const EmployerProfile = () => {
   const fileRef = useRef(null);
@@ -247,7 +248,9 @@ dispatch(deleteUserSuccess());
           >
             Delete Account
           </span>
-          <span className="font-poppins text-[#22C55E]  ">Applied Jobs</span>
+          <Link to = {`/joblists/${currentUser._id}`} className="cursor-pointer">
+          <span className="font-poppins text-[#22C55E]  ">Listed Jobs</span>
+          </Link>
          
         </div>
       </form>

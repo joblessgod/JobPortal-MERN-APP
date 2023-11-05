@@ -12,7 +12,7 @@ const ListedJobs = (props) => {
   const [listedJob, setListedJob] = useState([]);
   const [jobShowError, setJobShowError] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [postsPerPage, setPostsPerPage] = useState(1);
+  const [postsPerPage, setPostsPerPage] = useState(10);
 
   const navigate = useNavigate();
   useEffect(() => {

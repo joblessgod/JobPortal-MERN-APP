@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { FcNext, FcPrevious } from "react-icons/fc";
 import Pagination from "../../global/Pagination";
+import { InfinitySpin } from "react-loader-spinner";
 const JobLists = (props) => {
   let serialNumber = 1;
  
@@ -106,9 +107,9 @@ const JobLists = (props) => {
      
     </h2>
   )}
-  {loading ? (<p className="text-[green] font-poppins font-bold">Loading...</p>) : (
+  {loading ? (<div className="flex justify-center"><InfinitySpin width={200} height={200} color="black" /></div>) : (
     
-      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden border border-solid border-[#D6D0D0] rounded-[0.625rem] ">
+      <table key = {listedJob._id} className="min-w-full bg-white shadow-md rounded-lg overflow-hidden border border-solid border-[#D6D0D0] rounded-[0.625rem] ">
         <thead className="bg-gray-200 ">
           <tr className='font-poppins text-[1.25rem] font-[600]'>
           <th className="text-center py-2 px-2">ID</th>
@@ -121,13 +122,8 @@ const JobLists = (props) => {
         </thead>
         {currentPosts.map((job) => (
         <tbody >
-        {loading ? (
-          <tr>
-            <td colSpan="6" className="text-center py-2 px-2">
-              Loading...
-            </td>
-          </tr>
-        ) : (
+       
+        
             <tr key={job._id} className='font-poppins text-[#000] text-[1rem] '>
             <td className="py-2 px-2">{serialNumber++}</td>
               <td className="py-2 px-2">{job.jobtitle}</td>
@@ -143,14 +139,14 @@ const JobLists = (props) => {
                 </div>):( <BsEye size={20} color='#338573'/>)}
               </td>
             </tr>
-         ) }
+          
         </tbody>
         ))}
       </table>
       )}
         <p className="text-[red] font-poppins">{jobShowError && jobShowError}</p>
        
-       {listedJob.length === 0 && <p className="text-[green] font-poppins my-4 text-[1.5rem]">No Jobs Found!</p> }
+       {!loading && listedJob.length === 0 && <p className="text-[green] font-poppins my-4 text-[1.5rem]">No Jobs Found!</p> }
       <div className="flex justify-center items-center gap-2 p-3">
       
      {listedJob && <Pagination totalPosts = {listedJob.length} postsPerPage = {postsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>}

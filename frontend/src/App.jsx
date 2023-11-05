@@ -83,7 +83,7 @@ const hideRegisterHandler=()=>{
     <Route element = {<PrivateRoute />}>
     <Route path='profile' element = {<Profile />}/>
     <Route path='jobpost' element = {<JobPost />}/>
-    <Route path='joblists' element = {<JobLists />}/>
+    <Route path='joblists/:id' element = {<JobLists />}/>
     
     <Route path='updatejob/:id' element = {<UpdateListing />}/>
     </Route>
