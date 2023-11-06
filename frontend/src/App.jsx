@@ -16,6 +16,7 @@ import UpdateListing from './components/listedjobs/UpdateListing'
 import PrivateRoute from './components/privateroute/PrivateRoute'
 import JobDetails from './components/JobDetails'
 import JobCardList from './components/search/Search'
+import JobApplication from './components/jobapplication/JobApplication'
 
 
 
@@ -84,6 +85,7 @@ const hideRegisterHandler=()=>{
     <Route path='profile' element = {<Profile />}/>
     <Route path='jobpost' element = {<JobPost />}/>
     <Route path='joblists/:id' element = {<JobLists />}/>
+    <Route path='jobapply/:id' element = {<JobApplication />}/>
     
     <Route path='updatejob/:id' element = {<UpdateListing />}/>
     </Route>

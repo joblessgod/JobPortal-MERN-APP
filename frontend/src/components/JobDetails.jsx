@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Title from "../global/Title";
 import Button from "../global/Button";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 const eachdivstyle = "flex flex-row gap-2 font-poppins p-0";
 const insidedivstyle = "font-bold mb-1";
 const JobDetails = () => {
@@ -62,7 +63,9 @@ const JobDetails = () => {
         <button className="border border-solid border-[#CBD5E0] rounded-button p-2 font-[600]">
           View Company
         </button>
+        <Link to  ={`/jobapply/${details._id}`}>
         <Button msg="Apply This job" border="rounded-button" />
+        </Link>
       </div>
       <div className=" px-10 py-2">
         <div className="max-w-[fit-content] sm:mx-[15rem]">
