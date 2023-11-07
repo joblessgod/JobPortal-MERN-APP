@@ -10,9 +10,10 @@ const jobApplicationSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    phone: {
+    phoneno: {
       type: Number,
       required: true,
+      
      
     },
     coverletter: {

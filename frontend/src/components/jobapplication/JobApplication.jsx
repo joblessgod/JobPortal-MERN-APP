@@ -16,7 +16,7 @@ const JobApplication = () => {
   const [formData, setFormData] = useState({
     fullname: '',
     email: '',
-    phone: '',
+    phoneno: '',
     coverletter: '',
     resume: null,
   });
@@ -168,11 +168,11 @@ const {id} = useParams();
             Phone Number
           </label>
           <input
-            type="text"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+            type="number"
+            id="phoneno"
+            name="phoneno"
+            value={formData.phoneno}
+            onChange={(e) => setFormData({ ...formData, phoneno: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.phoneno ? 'border-[#ea4a5a]' : ''}`}
           />
           {errors.phoneno && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.phoneno}</p>}
