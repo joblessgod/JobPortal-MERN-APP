@@ -20,6 +20,7 @@ import JobApplication from './components/jobapplication/JobApplication'
 
 
 
+
 function App(props) {
 
   const tableData = [
@@ -85,7 +86,7 @@ const hideRegisterHandler=()=>{
     <Route path='profile' element = {<Profile />}/>
     <Route path='jobpost' element = {<JobPost />}/>
     <Route path='joblists/:id' element = {<JobLists />}/>
-    <Route path='jobapply/:id' element = {<JobApplication />}/>
+    <Route path='jobapply/:id' element = {<JobApplication />}/> 
     
     <Route path='updatejob/:id' element = {<UpdateListing />}/>
     </Route>

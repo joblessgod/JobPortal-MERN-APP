@@ -26,10 +26,12 @@ const jobApplicationSchema = new mongoose.Schema(
     jobid: {
       type: String,
       required: true,
+     
     },
     userRef: {
       type: String,
       required: true,
+      
     },
   },
   { timestamps: true }

@@ -8,83 +8,61 @@ import {
     uploadBytesResumable,
   } from "firebase/storage";
 import { app } from '../../firebase';
-
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { InfinitySpin } from 'react-loader-spinner';
 const JobApplication = () => {
+    const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
     fullname: '',
     email: '',
-    phoneno: '',
+    phone: '',
     coverletter: '',
     resume: null,
   });
+  const [loading,setLoading] = useState(false);
 const[files,setFiles] = useState(undefined);
-  const [errors, setErrors] = useState({});
+const [errors,setErrors] = useState({});
+  const [applyErrors, setApplyErrors] = useState(null);
  const [fileUploadError,setfileUploadError] = useState(false)
  const[filePerc,setFilePerc] = useState(0);
+const {id} = useParams();
 
- const validateForm = () => {
+  const validateForm = () => {
     let errors = {};
-  
+
     if (!formData.fullname) {
       errors.fullname = 'Full Name is required';
-    } else {
-      errors.fullname = ''; // Clear the error when the user starts typing
     }
-  
+
     if (!formData.email) {
       errors.email = 'Email is required';
     } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
       errors.email = 'Invalid email format';
-    } else {
-      errors.email = ''; // Clear the error when the user starts typing
     }
-  
+
     if (!formData.phoneno) {
       errors.phoneno = 'Phone Number is required';
     } else if (!/^\d{10}$/.test(formData.phoneno)) {
       errors.phoneno = 'Phone Number must be 10 digits';
-    } else {
-      errors.phoneno = ''; // Clear the error when the user starts typing
     }
-  
+
     if (!formData.coverletter) {
       errors.coverletter = 'Cover Letter is required';
-    } else {
-      errors.coverletter = ''; // Clear the error when the user starts typing
     }
-  
-    if (!formData.resume) {
-        errors.resume = 'Resume is required';
-      }else{
-        errors.resume = '';
-      }
-      
-      
+
+    if (!formData.resume ) {
+      errors.resume = 'Resume is required.';
+    }
+
     setErrors(errors);
-  
+
     return Object.keys(errors).length === 0;
   };
-  //clear the input field of error
-  const handleInputChange = (field, value) => {
-    // Clear the error message for the field
-    setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
 
-    // Update the form data
-    setFormData((prevData) => ({ ...prevData, [field]: value }));
-  };
-  const handleFileChange = (e) => {
-    const file = e.target.files;
-    setFormData({ ...formData, resume: file });
-  };
+ 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    if (validateForm()) {
-      // You can submit the form data to your server or perform any required action here.
-      console.log('Form data submitted:', formData);
-    }
-  };
   useEffect(() => {
     if (files) {
       handleFileUpload(files);
@@ -110,15 +88,46 @@ const[files,setFiles] = useState(undefined);
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
           setFormData({ ...formData, resume: downloadURL })
-          
         );
-        
       }
     );
   };
-  
- 
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try{
+        setLoading(true);
+        const res = await fetch(`/api/auth/apply/${id}`,{
+          method:"POST",
+            headers:{
+              'content-type':'application/json'
+            },
+            body:JSON.stringify({...formData,
+            userRef:currentUser._id,
+            jobid : id
+            
+            }),
+          }
+        );
+        const data = await res.json();
+        
+        if(data.success === false){
+          setLoading(false);
+          setApplyErrors(data.message);
+          return;
+        }
+        setLoading(false);
+        setApplyErrors(null);
+        
+        
+      }catch(error){
+      setLoading(false);
+      setApplyErrors(error.message);
+      
+      
+      }
+   
+  };
+ console.log(applyErrors);
   return (
    <div>
      <Title title = "Job Application Form"/>
@@ -133,10 +142,10 @@ const[files,setFiles] = useState(undefined);
             id="fullname"
             name="fullname"
             value={formData.fullname}
-            onChange={(e) => handleInputChange('fullname', e.target.value)} // Update the field-specific error message
+            onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.fullname ? 'border-[#ea4a5a]' : ''}`}
           />
-          {errors && errors.fullname && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.fullname}</p>}
+          {errors.fullname && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.fullname}</p>}
         </div>
 
         <div className="mb-4">
@@ -148,7 +157,7 @@ const[files,setFiles] = useState(undefined);
             id="email"
             name="email"
             value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.email ? 'border-[#ea4a5a]' : ''}`}
           />
           {errors.email && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.email}</p>}
@@ -160,10 +169,10 @@ const[files,setFiles] = useState(undefined);
           </label>
           <input
             type="text"
-            id="phoneno"
-            name="phoneno"
-            value={formData.phoneno}
-            onChange={(e) => handleInputChange('phoneno', e.target.value)}
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.phoneno ? 'border-[#ea4a5a]' : ''}`}
           />
           {errors.phoneno && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.phoneno}</p>}
@@ -177,7 +186,7 @@ const[files,setFiles] = useState(undefined);
             id="coverletter"
             name="coverletter"
             value={formData.coverletter}
-            onChange={(e) => handleInputChange('coverletter', e.target.value)}
+            onChange={(e) => setFormData({ ...formData, coverletter: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.coverletter ? 'border-[#ea4a5a]' : ''}`}
           />
           {errors.coverletter && <p className=" text-start text-[#ea4a5a] text-xs font-poppins">{errors.coverletter}</p>}
@@ -211,15 +220,14 @@ const[files,setFiles] = useState(undefined);
             ""
           )}
         </p>
-      {filePerc === 100 &&   <iframe src={formData.resume || ""} type="application/pdf" width="100%" height="500">
-        <p>It appears you don't have a PDF plugin for this browser. You can <a href="your-pdf-file.pdf">click here to download the PDF file.</a></p>
-      </iframe>}
-      
-
         </div>
-
+        {applyErrors && <p className="text-[red]  font-poppins text-[0.8rem] mt-4">{applyErrors}</p>}
         <div className="flex items-center justify-between">
-         <Button msg  ="Apply" border = "rounded-button"/>
+        {loading ? (
+            <InfinitySpin width={100} height={100} color="black" />
+          ) : (
+            <Button msg="Apply Job" border="rounded-button" />
+          )}
         </div>
       </form>
     </div>
@@ -227,4 +235,4 @@ const[files,setFiles] = useState(undefined);
   );
 };
 
-export default JobApplication;
+export default JobApplication
