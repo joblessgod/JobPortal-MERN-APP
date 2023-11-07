@@ -16,6 +16,7 @@ import {
  
 } from "../../redux/user/userSlice.js";
 import { InfinitySpin } from "react-loader-spinner";
+import { Link } from "react-router-dom";
 
 const SeekerProfile = () => {
   const fileRef = useRef(null);
@@ -263,9 +264,9 @@ const SeekerProfile = () => {
           <span onClick={handleClickToDelete} className="font-poppins text-[#B91C1C] cursor-pointer  ">
             Delete Account
           </span>
-          <button className="font-poppins text-[#22C55E]  ">
-            Applied Jobs
-          </button>
+          <Link to = {`/appliedjobs/${currentUser._id}`} className="cursor-pointer">
+          <span className="font-poppins text-[#22C55E]  ">Applied Jobs</span>
+          </Link>
         
         </div>
       </form>
