@@ -1,6 +1,7 @@
 import Application from "../model/jobapplication.model.js";
 import Listedjob from "../model/joblisting.model.js";
 import { errorHandler } from "../utils/error.js";
+import moment from "moment/moment.js";
 //apply for a job
 export const JobApplication = async (req, res, next) => {
   if (req.user && req.user.usertype === "seeker") {
@@ -59,9 +60,10 @@ export const getJobsAppliedByUser = async (req, res, next) => {
 
     // Extract the job IDs from the applications
     const jobIds = applications.map(application => application.jobid);
-
+  // Get the current date
+  const currentDate = moment().toDate();
     // Find the job details for the retrieved job IDs
-    const jobs = await Listedjob.find({ _id: { $in: jobIds } });
+    const jobs = await Listedjob.find({ _id: { $in: jobIds },  applicationdeadline: { $gte: currentDate },  });
 
     res.status(200).json(jobs);
     
