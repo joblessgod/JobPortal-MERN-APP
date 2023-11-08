@@ -8,6 +8,7 @@ import cors from 'cors'
 import logiInRouter from './route/login.route.js';
 import updateRouter from './route/update.route.js';
 import applicationRouter from './route/application.route.js';
+import categoryRouter from './route/category.route.js';
 
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use('/api/auth', eauthRouter);
 app.use('/api/auth', logiInRouter);
 app.use('/api/auth', updateRouter);
 app.use('/api/auth', applicationRouter);
+app.use('/api/auth', categoryRouter);
 
 //middleware for handle possible errors
 app.use((err,req,res,next)=>{
