@@ -7,7 +7,7 @@ export const addCategory= async (req,res,next)=>{
     try {
      const userId = req.user.id;
      const categoryname = req.body.categoryname;
-      // Check if the user has already applied for the same job
+      // Check if the user has already created for the same category
       const existingCategory = await ListedCategory.findOne({ categoryname: { $regex: new RegExp(categoryname, 'i') },
       userRef: userId, });
 
@@ -15,7 +15,7 @@ export const addCategory= async (req,res,next)=>{
         return next(errorHandler(400, "You've already created this category."));
       }
 
-      // If there is no existing application, create a new one
+      // If there is no existing category, create a new one
       const category = await ListedCategory.create({ ...req.body, userRef: userId });
       return res.status(200).json(category);
     } catch (error) {
