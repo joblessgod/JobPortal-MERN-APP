@@ -18,6 +18,9 @@ import JobDetails from './components/JobDetails'
 import JobCardList from './components/search/Search'
 import JobApplication from './components/jobapplication/JobApplication'
 import AppliedJobs from './appliedjobs/AppliedJobs'
+import Dashboard from './components/dashboard/Dashboard'
+
+
 
 
 
@@ -76,6 +79,7 @@ const hideRegisterHandler=()=>{
 <div>
     <NavBar onShowLogin = {showLoginHandler} onShowRegister = {showRegisterHandler} /> 
     <Routes>
+    
     <Route path='/' element={<Home />} />
     
     <Route path='seekerregister' element = {<JobSeekers />}/>
@@ -86,9 +90,12 @@ const hideRegisterHandler=()=>{
     <Route element = {<PrivateRoute />}>
     <Route path='profile' element = {<Profile />}/>
     <Route path='jobpost' element = {<JobPost />}/>
-    <Route path='joblists/:id' element = {<JobLists />}/>
+    <Route path='joblists' element = {<JobLists  />}/>
     <Route path='jobapply/:id' element = {<JobApplication />}/> 
     <Route path='appliedjobs/:id' element = {<AppliedJobs />}/> 
+    <Route path='dashboard' element = {<Dashboard />}/> 
+    
+   
     
     <Route path='updatejob/:id' element = {<UpdateListing />}/>
     </Route>

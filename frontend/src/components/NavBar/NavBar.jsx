@@ -46,10 +46,15 @@ const handleLogOut= async()=>{
    {
     
    currentUser && currentUser.usertype === "employer" ? (
+    <div>
       <Link to="/jobpost">
         <Button msg="Post a job" border="rounded-button" onClick={props.click} />
       
       </Link>
+      <Link to="/dashboard">
+      <span className={nam}>Dashboard</span>
+    </Link>
+    </div>
     ) : currentUser && currentUser.usertype === "seeker" ? (
       <p className={hello}>
         Hello,
