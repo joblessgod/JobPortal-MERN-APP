@@ -11,12 +11,14 @@ import { app } from '../../firebase';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { InfinitySpin } from 'react-loader-spinner';
+import { useNavigate } from 'react-router-dom';
 const JobApplication = () => {
+  const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state.user);
   const [formData, setFormData] = useState({
-    fullname: '',
-    email: '',
-    phoneno: '',
+    fullname: currentUser.name || '',
+    email: currentUser.email || '',
+    phoneno: currentUser.phone || '',
     coverletter: '',
     resume: null,
   });
@@ -117,6 +119,7 @@ const {id} = useParams();
         }
         setLoading(false);
         setApplyErrors(null);
+        navigate('/appliedjobs');
         
         
       }catch(error){
@@ -127,7 +130,7 @@ const {id} = useParams();
       }
    
   };
- console.log(applyErrors);
+ 
   return (
    <div>
      <Title title = "Job Application Form"/>
@@ -142,7 +145,8 @@ const {id} = useParams();
             id="fullname"
             name="fullname"
             value={formData.fullname}
-            onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
+            readOnly
+           // onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.fullname ? 'border-[#ea4a5a]' : ''}`}
           />
           {errors.fullname && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.fullname}</p>}
@@ -157,7 +161,8 @@ const {id} = useParams();
             id="email"
             name="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            readOnly
+           // onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.email ? 'border-[#ea4a5a]' : ''}`}
           />
           {errors.email && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.email}</p>}
@@ -172,8 +177,9 @@ const {id} = useParams();
             id="phoneno"
             name="phoneno"
             value={formData.phoneno}
-            onChange={(e) => setFormData({ ...formData, phoneno: e.target.value })}
+            //onChange={(e) => setFormData({ ...formData, phoneno: e.target.value })}
             className={`appearance-none border rounded-[0.7rem] w-full py-2 px-3 text-[#4a5568] leading-tight focus:outline-none ${errors.phoneno ? 'border-[#ea4a5a]' : ''}`}
+            readOnly
           />
           {errors.phoneno && <p className="text-[#ea4a5a] text-start text-xs font-poppins">{errors.phoneno}</p>}
         </div>
@@ -226,7 +232,7 @@ const {id} = useParams();
         {loading ? (
             <InfinitySpin width={100} height={100} color="black" />
           ) : (
-            <Button msg="Apply Job" border="rounded-button" />
+            <Button msg="Apply Job" border="rounded-button" disabled={filePerc > 0 && filePerc < 100} />
           )}
         </div>
       </form>

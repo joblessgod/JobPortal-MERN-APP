@@ -5,6 +5,7 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import {useNavigate} from 'react-router-dom'
 import Login from '../login/Login';
 import { InfinitySpin } from "react-loader-spinner";
+import Loader from "../../global/Loader";
 const userType = "employer"
 
 const Employer = () => {
@@ -205,10 +206,10 @@ const Employer = () => {
           </p>
 
           <div className="flex flex-row justify-center items-center">
-          {loading ? (<InfinitySpin className = "items-center"
+          {loading ? (<Loader className = "items-center"
             width={100}
             height = {100}
-            color="black"/>):( <Button msg="Register" border="rounded-button" />)}
+            />):( <Button msg="Register" border="rounded-button" />)}
            
           </div>
          {error && <p className="text-[red]  font-poppins text-[0.8rem] mt-4">{error}</p>}

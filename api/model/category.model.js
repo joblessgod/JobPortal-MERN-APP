@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 const categorySchema   = new mongoose.Schema({
     categoryname:{
         type:String,
-        required:true
+        required:true,
+        unique:true
     },
     userRef:{
         type:String,

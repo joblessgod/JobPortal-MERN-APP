@@ -1,6 +1,13 @@
 import express from "express";
 import { verifyUser } from "../utils/userVerify.js";
-import { addCategory } from "../controller/category.controller.js";
+import { addCategory, deleteCategory, getAllCategoryWithJobCount,getCategory, listofCategoriesByid, updateNameOfCategory } from "../controller/category.controller.js";
+import { JobsBasedOnCategory } from "../controller/joblist.controller.js";
 const categoryRouter = express.Router();
 categoryRouter.post('/addcategory',verifyUser,addCategory);
+categoryRouter.get('/getcategory/:id',verifyUser,getCategory);
+categoryRouter.get('/getcategorybyid/:id',verifyUser,listofCategoriesByid);
+categoryRouter.get('/getallcategory',getAllCategoryWithJobCount);
+categoryRouter.get('/getjobsfromcategory/:categoryId',JobsBasedOnCategory);
+categoryRouter.post('/updatecategory/:id',verifyUser,updateNameOfCategory);
+categoryRouter.delete('/deletecategory/:id',verifyUser,deleteCategory);
 export default categoryRouter;

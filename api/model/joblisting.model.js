@@ -12,10 +12,10 @@ const joblistSchema   = new mongoose.Schema({
         type:String,
         required:true
     },
-    jobcategory:{
-        type:String,
-        required:true,
+    jobcategory: {
+        type: mongoose.Schema.ObjectId,
         
+        required: true,
     },
 
     jobtype:{

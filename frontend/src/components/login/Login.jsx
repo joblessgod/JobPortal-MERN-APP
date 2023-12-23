@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
 import { useSelector,useDispatch } from 'react-redux';
 import { signInFailure,signInStart,signInSuccess } from "../../redux/user/userSlice";
+import Loader from "../../global/Loader";
 
 
 const Login = (props) => {
@@ -139,11 +140,11 @@ const Login = (props) => {
           </div>
           {error && <p className="text-[red]  font-poppins text-[1rem] mb-4">{error}</p>}
          
-         {loading ? (<InfinitySpin 
+         {loading ? (<Loader 
           width={100}
           height = {100}
          
-          color="black"
+          
         />):( <Button msg="LogIn" border="rounded-button"/>)}
         
         </form>

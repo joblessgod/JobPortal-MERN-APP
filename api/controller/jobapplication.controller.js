@@ -1,5 +1,6 @@
 import Application from "../model/jobapplication.model.js";
 import Listedjob from "../model/joblisting.model.js";
+import User from '../model/user.model.js';
 import { errorHandler } from "../utils/error.js";
 import moment from "moment/moment.js";
 //apply for a job
@@ -27,23 +28,7 @@ export const JobApplication = async (req, res, next) => {
   }
 };
 
-//for getting a list of applicant for a job
-/* export const getJobApplication=async(req,res,next)=>{
-   
-     if(req.user && req.user.usertype === "employer"){
-        try{
-            const listofapplication = await Application.find({jobid : req.params.jobid})
-           
-            res.status(200).json(listofapplication);
-              
-        }catch(error){
-            next(error);
-        }
-    }else if(req.user && req.user.usertype === "seeker"){
-      return next(errorHandler(402,"Unauthorized Access!"))
-    }
-} */
-//get the jobs applied by a user 
+
 
 
 
@@ -63,7 +48,7 @@ export const getJobsAppliedByUser = async (req, res, next) => {
   // Get the current date
   const currentDate = moment().toDate();
     // Find the job details for the retrieved job IDs
-    const jobs = await Listedjob.find({ _id: { $in: jobIds },  applicationdeadline: { $gte: currentDate },  });
+    const jobs = await Listedjob.find({ _id: { $in: jobIds }  });
 
     res.status(200).json(jobs);
     
@@ -74,5 +59,26 @@ export const getJobsAppliedByUser = async (req, res, next) => {
 }else{
   next(errorHandler(404,"User Not Found!"))
 }
+};
+//gets an application for a specific job
+export const getApplicationsForJob = async (req, res, next) => {
+  if(req.user && req.user.usertype === 'employer'){
+    try {
+      // Extract the job ID from the request
+      const jobId = req.params.id;
+  
+      // Find all applications associated with the job ID
+      const applications = await Application.find({ jobid: jobId });
+      if (applications.length === 0) {
+        return next(errorHandler(404, 'No Applications Found!'));
+      }
+      res.status(200).json(applications);
+    } catch (error) {
+      next(errorHandler(500, 'Internal Server Error'));
+    }
+  }else{
+    return next(errorHandler(402,"Unauthorized Access!"));
+  }
+  
 };
 

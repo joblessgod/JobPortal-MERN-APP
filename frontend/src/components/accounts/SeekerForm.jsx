@@ -1,15 +1,24 @@
-import React, { useRef, useState } from "react";
+import React, { useState,useEffect } from "react";
 import Button from "../../global/Button";
 import {AiFillEye} from 'react-icons/ai';
 import {AiFillEyeInvisible} from 'react-icons/ai';
 import Login from "../login/Login";
 import { useNavigate } from "react-router-dom";
 import { InfinitySpin } from "react-loader-spinner";
+import Select from "react-select";
+import { fetchPublicCategories } from "../../redux/publiccategory/publiccatSlice";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../../global/Loader";
 const userType = "seeker";
 
   const SeekerForm=()=>{
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const publiccategories = useSelector(
+      (state) => state.publiccategories.publiccategories
+    );
     const [showPassword,setShowPassword] = useState(false);
+    const[selectedOption,setSelectedOption] = useState('');
     const [formData,setFormData] = useState({
       name: "",
       pjobcategory:"",
@@ -21,6 +30,10 @@ const userType = "seeker";
     const [loading,setLoading] = useState(false);
     const [error,setError] = useState(null);
     const [showLogin,setShowLogin] = useState(false);
+    //onchange of select job categoey
+const handlecatChange = (selectedOption) => {
+  setSelectedOption(selectedOption.value);
+};
     const hideLoginHandler=()=>{
       setShowLogin(false);
       navigate('/');
@@ -28,6 +41,7 @@ const userType = "seeker";
     const handleChange=(e)=>{
   setFormData({
     ...formData,
+    pjobcategory:selectedOption,
     [e.target.id] : e.target.value
   })
   console.log(formData);
@@ -70,6 +84,10 @@ const handleSubmit=async(e)=>{
 
 };
 
+  // Dispatch the fetch action
+  useEffect(() => {
+    dispatch(fetchPublicCategories());
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col justify-start items-start p-4 gap-3">
@@ -100,24 +118,23 @@ const handleSubmit=async(e)=>{
             />
            
           </div>
-          <div className="mb-4">
-            <label
-              htmlFor="jobCategory"
-              className="flex justify-start font-poppins text-[#000] mb-1"
-            >
-              Preferred Job Category
-            </label>
-            <select
-              id="pjobcategory"
-              name="pjobCategory"
-              className="w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] "
-              onChange={handleChange}
-            >
-            <option>Select Your Preferred Job Category</option>
-              <option value="IT" >IT</option>
-              <option value="Account">Account</option>
-              <option value="Teaching">Teaching</option>
-            </select>
+          <div className="mb-1">
+          <label
+            htmlFor="jobCategory"
+            className="flex justify-start font-poppins text-[#000]    mb-1"
+          >
+           Preferred Job Category
+          </label>
+          <Select
+            value={selectedOption.label}
+            onChange={handlecatChange}
+            options={publiccategories.map((category) => ({
+              label: category.categoryname,
+              value: category.categoryname,
+            }))}
+            isSearchable
+            placeholder="--Select Preferred Job Category--"
+          />
            
           </div>
 
@@ -183,10 +200,10 @@ const handleSubmit=async(e)=>{
         </p>
 
         <div className="flex flex-row justify-center items-center">
-        {loading ? (<InfinitySpin  
+        {loading ? (<Loader  
           width={100}
           height = {100}
-          color="black"/>):( <Button msg="Register" border="rounded-button" />)}
+          />):( <Button msg="Register" border="rounded-button" />)}
          
         </div>
         {error && <p className="text-[red]  font-poppins text-[0.8rem] mt-4">{error}</p>}

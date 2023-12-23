@@ -1,10 +1,12 @@
 import { combineReducers,configureStore} from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage'
 import userReducer from './user/userSlice';
-import joblistsReducer from './joblist/joblistSlice';
+import jobListReducer from './joblist/joblistSlice';
+import categoryListReducer from './category/categorySlice';
+import publiccategoryListReducer from './publiccategory/publiccatSlice'
 import {persistReducer} from 'redux-persist';
 import persistStore from 'redux-persist/es/persistStore';
-const rootReducer = combineReducers({user:userReducer,joblists: joblistsReducer,});
+const rootReducer = combineReducers({user:userReducer,jobsLists: jobListReducer,categoryLists : categoryListReducer, publiccategories: publiccategoryListReducer,});
 const persistConfig = {
   key:'root',
   storage,

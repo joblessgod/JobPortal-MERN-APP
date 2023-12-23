@@ -10,7 +10,7 @@ import Pagination from "../global/Pagination";
 import { useSelector } from "react-redux";
 const AppliedJobs = (props) => {
     const { currentUser } = useSelector((state) => state.user);
-    const { id } = useParams();
+    
   let serialNumber = 1;
   const [listedJob, setListedJob] = useState([]);
   const [jobShowError, setJobShowError] = useState(false);
@@ -24,7 +24,7 @@ const AppliedJobs = (props) => {
       try {
         setLoading(true);
        
-        const res = await fetch(`/api/auth/getappliedbyuser/${id}`, {
+        const res = await fetch(`/api/auth/getappliedbyuser/${currentUser._id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -45,7 +45,7 @@ const AppliedJobs = (props) => {
       }
     };
     fetchListedJob();
-  }, [id]);
+  }, [currentUser._id]);
 
   //view more
   const handleViewMore = () => {

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "../../global/Button";
 import DeleteProfile from "./DeleteProfile";
+import Select from "react-select";
 import {
   getDownloadURL,
   getStorage,
@@ -13,7 +14,6 @@ import {
   updateUserSuccess,
   updateUserFailure,
   updateUserStart,
- 
 } from "../../redux/user/userSlice.js";
 import { InfinitySpin } from "react-loader-spinner";
 import { Link } from "react-router-dom";
@@ -21,22 +21,18 @@ import { Link } from "react-router-dom";
 const SeekerProfile = () => {
   const fileRef = useRef(null);
   const dispatch = useDispatch();
-  const { currentUser,error,loading } = useSelector((state) => state.user);
+  const publiccategories = useSelector(
+    (state) => state.publiccategories.publiccategories
+  );
+  const { currentUser, error, loading } = useSelector((state) => state.user);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({});
-  const[updateSuccess,setUpdateSuccess] = useState(false);
-
-  console.log(formData);
-  console.log(filePerc);
-  console.log(fileUploadError);
-
-  // firebase storage
-  // allow read;
-  // allow write: if
-  // request.resource.size < 2 * 1024 * 1024 &&
-  // request.resource.contentType.matches('image/.*')
+  const [selectedOption, setSelectedOption] = useState(null);
+  const [formData, setFormData] = useState({
+    name: currentUser.fullname,
+  });
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   useEffect(() => {
     if (file) {
@@ -62,18 +58,31 @@ const SeekerProfile = () => {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-          setFormData({ ...formData, avatar: downloadURL })
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            avatar: downloadURL,
+          }))
         );
       }
     );
   };
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.id]: e.target.value,
-    });
+
+  const handleChange = (e, meta) => {
+    if (e && e.target) {
+      const { id, value } = e.target;
+      setFormData({
+        ...formData,
+        [id]: value,
+      });
+    } else if (meta && meta.name) {
+      setFormData({
+        ...formData,
+        [meta.name]: e.value,
+      });
+      setSelectedOption(e);
+    }
   };
-  
+
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -86,7 +95,7 @@ const SeekerProfile = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if(data.success === false){
+      if (data.success === false) {
         dispatch(updateUserFailure(data.message));
         return;
       }
@@ -96,31 +105,26 @@ const SeekerProfile = () => {
       dispatch(updateUserFailure(error.message));
     }
   };
- /* const handleDelete= async ()=>{
-    try{
-    dispatch(deleteUserStart());
-    const res = await fetch(`/api/auth/delete/${currentUser._id}`,{
-      method:"DELETE"
-    })
-    const data = res.json();
-    if(data.success === false){
-      dispatch(deleteUserFailure(data.message))
-      return;
-    }
-    dispatch(deleteUserSuccess());
-    }catch(error){
-      dispatch(deleteUserFailure(error.message))
-    }
-      }*/
-      //for Delete
-     const handleDelete = DeleteProfile();
 
+  const handleDelete = DeleteProfile();
   const handleClickToDelete = async () => {
-    
-      await handleDelete();
-     
-    } ;
-  
+    await handleDelete();
+  };
+
+  useEffect(() => {
+    const selectedCategory = publiccategories.find(
+      (category) => category.categoryname === currentUser.pjobcategory
+    );
+    setSelectedOption(
+      selectedCategory
+        ? {
+            label: selectedCategory.categoryname,
+            value: selectedCategory.categoryname,
+          }
+        : null
+    );
+  }, [publiccategories, currentUser]);
+
   return (
     <div className="max-w-4xl m-auto">
       <h1 className="text-[1.5rem] font-poppins font-bold text-[#1C64F2] my-2">
@@ -168,11 +172,11 @@ const SeekerProfile = () => {
             <input
               type="text"
               id="name"
-              name="companyName"
+              name="name"
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="Name"
               defaultValue={currentUser.name}
-              onChange={handleChange}
+              onChange={(e) => handleChange(e)}
             />
           </div>
           <div className="mb-4">
@@ -182,22 +186,17 @@ const SeekerProfile = () => {
             >
               Preferred Job Category
             </label>
-            <select
-              id="pjobcategory"
-              name="pjobCategory"
-              className="w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] "
-              onChange={handleChange}
-            >
-              <option>Select Your Preferred Job Category</option>
-              <option value="Account">Account</option>
-              <option defaultValue={currentUser.pjobCategory} selected>
-                {currentUser.pjobcategory}
-              </option>
-
-              <option value="Teaching">Teaching</option>
-            </select>
+            <Select
+              value={selectedOption}
+              onChange={(e) => handleChange(e, { name: "pjobcategory" })}
+              options={publiccategories.map((category) => ({
+                label: category.categoryname,
+                value: category.categoryname,
+              }))}
+              isSearchable
+            />
           </div>
- 
+
           <div className="mb-4">
             <label
               htmlFor="email"
@@ -212,7 +211,7 @@ const SeekerProfile = () => {
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="Email"
               defaultValue={currentUser.email}
-              onChange={handleChange}
+              onChange={(e) => handleChange(e)}
             />
           </div>
 
@@ -230,7 +229,7 @@ const SeekerProfile = () => {
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="Phone"
               defaultValue={currentUser.phone}
-              onChange={handleChange}
+              onChange={(e) => handleChange(e)}
             />
           </div>
 
@@ -247,27 +246,40 @@ const SeekerProfile = () => {
               name="password"
               className={`w-full p-2 border border-[#D6D6D6] rounded-[0.625rem] font-poppins text-[#AEB0B4] text-[0.8rem] `}
               placeholder="password"
-              onChange={handleChange}
+              onChange={(e) => handleChange(e)}
             />
           </div>
+
         </div>
         <div className="flex flex-row justify-center items-center">
-        {loading ? (<InfinitySpin className = "items-center"
-        width={100}
-        height = {100}
-        color="black"/>):(<Button msg="Update" border="rounded-button" />)}
+          {loading ? (
+            <InfinitySpin
+              className="items-center"
+              width={100}
+              height={100}
+              color="black"
+            />
+          ) : (
+            <Button msg="Update" border="rounded-button" />
+          )}
         </div>
-        <p className="text-[red] font-poppins">{error? error : ''}</p>
-        {updateSuccess && <p className="text-[green] font-poppins my-3 text-start">Profile Updated Successfully!</p>}
+        <p className="text-[red] font-poppins">{error ? error : ""}</p>
+        {updateSuccess && (
+          <p className="text-[green] font-poppins my-3 text-start">
+            Profile Updated Successfully!
+          </p>
+        )}
         <div className=" bg-[gray] h-1  my-2" />
         <div className="flex flex-row justify-center gap-12 items-center mt-2 mb-2">
-          <span onClick={handleClickToDelete} className="font-poppins text-[#B91C1C] cursor-pointer  ">
+          <span
+            onClick={handleClickToDelete}
+            className="font-poppins text-[#B91C1C] cursor-pointer  "
+          >
             Delete Account
           </span>
-          <Link to = {`/appliedjobs/${currentUser._id}`} className="cursor-pointer">
-          <span className="font-poppins text-[#22C55E]  ">Applied Jobs</span>
+          <Link to={`/appliedjobs`} className="cursor-pointer">
+            <span className="font-poppins text-[#22C55E]  ">Applied Jobs</span>
           </Link>
-        
         </div>
       </form>
     </div>

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { selectUser } from '../user/userSlice';
 
 // Define an async thunk for fetching jobs
-export const fetchJobs = createAsyncThunk("jobsLists/fetchJobs", async (_, { getState }) => {
+export const fetchCategories = createAsyncThunk("categoryLists/fetchCategories", async (_, { getState }) => {
   try {
     // Get the user from the user slice using the selector
     const currentUser = selectUser(getState());
@@ -11,18 +11,18 @@ export const fetchJobs = createAsyncThunk("jobsLists/fetchJobs", async (_, { get
     if (currentUser) {
       const userId = currentUser._id;
       console.log("User ID:", userId);
-      const apiUrl = `/api/auth/view/${userId}`;
-
+      const apiUrl = `/api/auth/getcategory/${userId}`;
+  console.log(userId)
       // Fetch data from the API endpoint
       const response = await fetch(apiUrl);
       const data = await response.json();
 
       // Check if the API call was successful
       if (data.success === false) {
-        throw new Error("Failed to fetch jobs");
+        throw new Error("Failed to fetch categories");
       }
 
-      // Return the fetched jobs
+      // Return the fetched Categories
       return data;
     } else {
       console.log("User not available");
@@ -35,10 +35,10 @@ export const fetchJobs = createAsyncThunk("jobsLists/fetchJobs", async (_, { get
 
 
 
-const jobsListSlice = createSlice({
-  name: "jobsLists",
+const categoryListSlice = createSlice({
+  name: "categoryLists",
   initialState: {
-    jobs: [],
+    categories: [],
     loading: false,
     error: null,
   },
@@ -47,28 +47,28 @@ const jobsListSlice = createSlice({
    /* addJob: (state, action) => {
       state.jobs.push(action.payload);
     },*/
-    updateJob: (state, action) => {
-      const jobIndex = state.jobs.findIndex(
-        (job) => job._id === action.payload._id
+    updateCategory: (state, action) => {
+      const categoryIndex = state.categories.findIndex(
+        (categories) => categories._id === action.payload._id
       );
-      state.jobs[jobIndex] = action.payload;
+      state.categories[categoryIndex] = action.payload;
     },
-    deleteJob: (state, action) => {
-      const deletedJobId = action.payload;
-      state.jobs = state.jobs.filter((job) => job._id !== deletedJobId);
+    deleteCategory: (state, action) => {
+      const deletedCategoryId = action.payload;
+      state.categories = state.categories.filter((categories) => categories._id !== deletedCategoryId);
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchJobs.pending, (state) => {
+      .addCase(fetchCategories.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchJobs.fulfilled, (state, action) => {
-        state.jobs = action.payload;
+      .addCase(fetchCategories.fulfilled, (state, action) => {
+        state.categories = action.payload;
         state.loading = false;
         state.error = null;
       })
-      .addCase(fetchJobs.rejected, (state, action) => {
+      .addCase(fetchCategories.rejected, (state, action) => {
         state.error = action.error;
         state.loading = false;
       });
@@ -76,7 +76,7 @@ const jobsListSlice = createSlice({
 });
 
 export const {
-  updateJob,
-  deleteJob,
-} = jobsListSlice.actions;
-export default jobsListSlice.reducer;
+  updateCategory,
+  deleteCategory,
+} = categoryListSlice.actions;
+export default categoryListSlice.reducer;

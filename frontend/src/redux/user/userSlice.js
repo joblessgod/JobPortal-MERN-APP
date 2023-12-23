@@ -56,6 +56,11 @@ const userSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
     },
+    clearUser: (state) => {
+      state.currentUser = null;
+      state.error = null;
+      state.loading = false;
+    },
   },
 });
 export const {
@@ -71,5 +76,8 @@ export const {
   signOutFailure,
   signOutSuccess,
   signOutStart,
+  clearUser
 } = userSlice.actions;
+//for redux access
+export const selectUser = (state) => state.user.currentUser;
 export default userSlice.reducer;

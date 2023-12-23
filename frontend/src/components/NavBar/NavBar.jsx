@@ -5,8 +5,10 @@ import { Link } from 'react-router-dom';
 import { signOutFailure,signOutSuccess,signOutStart } from '../../redux/user/userSlice'
 import { useDispatch } from "react-redux";
 import {FiLogOut} from 'react-icons/fi'
+import { MdDashboardCustomize } from 'react-icons/md';
+
 const hello = "font-poppins font-bold";
-const nam = "text-[#1C64F2]";
+const nam = "text-[#1C64F2] font-poppins font-bold";
 const NavBar = (props) => {
 const dispatch = useDispatch();
 const {currentUser} = useSelector(state=>state.user);
@@ -14,6 +16,7 @@ const handleLogOut= async()=>{
  
     try{
       dispatch(signOutStart());
+    
       const res = await fetch('/api/auth/signout');
       const data = await res.json();
       if(data.success === false){
@@ -47,12 +50,13 @@ const handleLogOut= async()=>{
     
    currentUser && currentUser.usertype === "employer" ? (
     <div>
-      <Link to="/jobpost">
+    {/*<Link to="/jobpost">
         <Button msg="Post a job" border="rounded-button" onClick={props.click} />
       
-      </Link>
-      <Link to="/dashboard">
-      <span className={nam}>Dashboard</span>
+      </Link> */}  
+      <Link to="/dashboard" className='flex flex-row gap-1'>
+    {/*   <span className={nam}>Dashboard</span> */}
+      <MdDashboardCustomize size={25} title='Click Here To Go To Dashboard'  color='green'/>
     </Link>
     </div>
     ) : currentUser && currentUser.usertype === "seeker" ? (
